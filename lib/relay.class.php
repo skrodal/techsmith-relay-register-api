@@ -15,7 +15,6 @@
 
 	class Relay {
 		protected $config;
-		private $DEBUG = false;
 		private $relaySQL;
 
 		function __construct($config) {
@@ -27,63 +26,35 @@
 		# FUNCTIONS ACCESSIBLE BY ROUTES
 		########################################################
 
-		public function userInfo($username){
-			$sqlUserInfoResponse = $this->relaySQL->query("
-				SELECT *
-				FROM tblUser
-				WHERE userName = '$username'");
-
-			return empty($sqlUserInfoResponse) ? null : $sqlUserInfoResponse[0];
-		}
-
+		/**
+		 * GET /version/
+		 *
+		 * @return string
+		 */
 		public function getRelayVersion() {
 			$versionResponse = $this->relaySQL->query("SELECT * FROM tblVersion")[0];
 			return $versionResponse['versValue'];
 		}
 
 		/**
-		 * Check if a user exists.
+		 * GET /me/
 		 *
 		 * @param $username
-		 *
-		 * @return bool
+		 * @return null|object
 		 */
-		private function _checkUserExists($username) {
-			// Lookup account info for requested user
+		public function getUserInfo($username){
 			$sqlUserInfoResponse = $this->relaySQL->query("
-				SELECT userName, userEmail
+				SELECT userName, userEmail, userDisplayName
 				FROM tblUser
 				WHERE userName = '$username'");
-			//
-			return !empty($sqlUserInfoResponse);
+
+			return empty($sqlUserInfoResponse) ? null : $sqlUserInfoResponse[0];
 		}
 
 		public function createUser($userDetails){
 			// TODO
 		}
 
-
-
-
-
-		// ---------------------------- UTILS ----------------------------
-
-		private function _responseToArray($response) {
-			$newArr = Array();
-			foreach($response as $child) {
-				$newArr[] = $child;
-			}
-
-			return $newArr;
-		}
-
-		private function _logger($text, $line, $function) {
-			if($this->DEBUG) {
-				error_log($function . '(' . $line . '): ' . $text);
-			}
-		}
-
-		// ---------------------------- ./UTILS ----------------------------
 
 
 	}

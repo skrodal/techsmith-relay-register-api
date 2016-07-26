@@ -1,18 +1,19 @@
 <?php
 
-	$TESTING = TRUE;
+	// Indicates use of old DB
+	$API_TEST_MODE = true;
 
 	$DATAPORTEN_CONFIG_PATH = '/var/www/etc/techsmith-relay-register/dataporten_config.js';
 
-	if($TESTING){
+	if($API_TEST_MODE) {
 		// TEST CONFIG (USES OLD DB)
-		$RELAY_CONFIG_PATH         = '/var/www/etc/techsmith-relay/relay_config_TEST.js';
+		$RELAY_CONFIG_PATH = '/var/www/etc/techsmith-relay/relay_config_TEST.js';
 	} else {
 		// PROD CONFIG (USES CURRENT DB)
-		$RELAY_CONFIG_PATH         = '/var/www/etc/techsmith-relay/relay_config.js';
+		$RELAY_CONFIG_PATH = '/var/www/etc/techsmith-relay/relay_config.js';
 	}
 
-	$API_BASE_PATH             = '/api/techsmith-relay-register'; // Remember to update .htacces as well. Same with a '/' at the end...
+	$API_BASE_PATH = '/api/techsmith-relay-register'; // Remember to update .htacces as well. Same with a '/' at the end...
 
 	//
 	$BASE = dirname(__FILE__);
@@ -30,8 +31,9 @@
 	$router->setBasePath($API_BASE_PATH);
 	// Relay API
 	require_once($BASE . '/lib/relay.class.php');
-	$relay_config = json_decode(file_get_contents($RELAY_CONFIG_PATH), true);
-	$relay        = new Relay($relay_config);
+	$relay_config  = json_decode(file_get_contents($RELAY_CONFIG_PATH), true);
+	$relay         = new Relay($relay_config);
+	$relay_version = $relay->getRelayVersion();
 
 // ---------------------- DEFINE ROUTES ----------------------
 
@@ -49,17 +51,17 @@
 	 * GET TechSmith Relay version
 	 */
 	$router->map('GET', '/version/', function () {
-		global $relay;
-		Response::result($relay->getRelayVersion());
+		global $relay, $relay_version;
+		Response::result($relay_version);
 	}, 'TechSmith Relay version');
 
 	/**
-	 * GET TechSmith Relay version
+	 * GET User account info (name, email, username)
 	 */
 	$router->map('GET', '/me/', function () {
 		global $relay, $dataporten;
-		Response::result($relay->userInfo($dataporten->getUserName()));
-	}, 'TechSmith Relay user account info');
+		Response::result($relay->getUserInfo($dataporten->getUserName()));
+	}, 'User account info (false if no account)');
 
 	/**
 	 * GET Template
@@ -121,5 +123,6 @@
 	function get_path_info() {
 		global $API_BASE_PATH;
 		$requestUrl = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+
 		return substr($requestUrl, strlen($API_BASE_PATH));
 	}

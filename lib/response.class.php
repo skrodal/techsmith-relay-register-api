@@ -16,7 +16,10 @@ class Response {
 		header('content-type: application/json; charset=utf-8');
 		//
 		http_response_code(200);
-		// Return response
+		// Return response (add a note if we're in test mode
+		if($GLOBALS['API_TEST_MODE']){
+			exit(json_encode( array('status' => true, 'NOTE' => 'TEST MODE IS ON. USING OLD DATABASE (v.' . $GLOBALS['relay_version'] . ')', 'data' => $result) ));
+		}
 		exit(json_encode( array('status' => true, 'data' => $result) ));
 	}
 
