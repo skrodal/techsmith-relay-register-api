@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteBase /api/techsmith-relay-register/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . index.php [L]
