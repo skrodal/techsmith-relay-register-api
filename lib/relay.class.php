@@ -27,6 +27,13 @@
 		# FUNCTIONS ACCESSIBLE BY ROUTES
 		########################################################
 
+		public function userInfo($username){
+			return $this->relaySQL->query("
+				SELECT userName, userEmail
+				FROM tblUser
+				WHERE userName = '$username'");
+		}
+
 		public function getRelayVersion() {
 			$versionResponse = $this->relaySQL->query("SELECT * FROM tblVersion")[0];
 			return $versionResponse['versValue'];

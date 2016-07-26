@@ -21,8 +21,8 @@
 	require_once($BASE . '/lib/response.class.php');
 	// Checks CORS and pulls Dataporten info from headers
 	require_once($BASE . '/lib/dataporten.class.php');
-	$feide_config = json_decode(file_get_contents($DATAPORTEN_CONFIG_PATH), true);
-	$feide        = new Dataporten($feide_config);
+	$dataporten_config = json_decode(file_get_contents($DATAPORTEN_CONFIG_PATH), true);
+	$dataporten        = new Dataporten($dataporten_config);
 	//  http://altorouter.com
 	require_once($BASE . '/lib/router.class.php');
 	$router = new Router();
@@ -54,6 +54,14 @@
 	}, 'TechSmith Relay version');
 
 	/**
+	 * GET TechSmith Relay version
+	 */
+	$router->map('GET', '/me/', function () {
+		global $relay, $dataporten;
+		Response::result($relay->userInfo($dataporten->getUserName()));
+	}, 'TechSmith Relay user account info');
+
+	/**
 	 * GET Template
 	 *
 	 * $router->map('GET', '/PATH/[i:iD]/status/', function ($iD) {
@@ -75,13 +83,13 @@
 
 	// Restrict access to specified org
 	function verifyOrgAccess() {
-		global $feide;
+		global $dataporten;
 
-		if(!$feide->isUserSuperAdmin()) {
+		if(!$dataporten->isUserSuperAdmin()) {
 			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (USER is missing required access rights). ');
 		}
 
-		if(!$feide->hasAdminScope()) {
+		if(!$dataporten->hasAdminScope()) {
 			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (CLIENT is missing required scope). ');
 		}
 	}
