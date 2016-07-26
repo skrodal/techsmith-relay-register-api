@@ -1,20 +1,13 @@
 <?php
 
 	// Indicates use of old DB
-	$API_TEST_MODE = true;
-
+	$API_TEST_MODE = TRUE;
+	// 
 	$DATAPORTEN_CONFIG_PATH = '/var/www/etc/techsmith-relay-register/dataporten_config.js';
-
-	if($API_TEST_MODE) {
-		// TEST CONFIG (USES OLD DB)
-		$RELAY_CONFIG_PATH = '/var/www/etc/techsmith-relay/relay_config_TEST.js';
-	} else {
-		// PROD CONFIG (USES CURRENT DB)
-		$RELAY_CONFIG_PATH = '/var/www/etc/techsmith-relay/relay_config.js';
-	}
-
+	// TEST CONFIG (USES OLD DB) : PROD CONFIG (USES CURRENT DB)
+	$RELAY_CONFIG_PATH = $API_TEST_MODE ? '/var/www/etc/techsmith-relay/relay_config_TEST.js' : '/var/www/etc/techsmith-relay/relay_config.js';
+	//
 	$API_BASE_PATH = '/api/techsmith-relay-register'; // Remember to update .htacces as well. Same with a '/' at the end...
-
 	//
 	$BASE = dirname(__FILE__);
 
@@ -33,7 +26,6 @@
 	require_once($BASE . '/lib/relay.class.php');
 	$relay_config  = json_decode(file_get_contents($RELAY_CONFIG_PATH), true);
 	$relay         = new Relay($relay_config);
-	$relay_version = $relay->getRelayVersion();
 
 // ---------------------- DEFINE ROUTES ----------------------
 
@@ -48,11 +40,19 @@
 
 
 	/**
+	 * GET If we're using old database (for testing)
+	 */
+	$router->map('GET', '/testmode/', function () {
+		global $API_TEST_MODE;
+		Response::result($API_TEST_MODE === true);
+	}, 'Check if API is running in test mode (read/write to old DB)');
+
+	/**
 	 * GET TechSmith Relay version
 	 */
 	$router->map('GET', '/version/', function () {
-		global $relay, $relay_version;
-		Response::result($relay_version);
+		global $relay;
+		Response::result($relay->getRelayVersion());
 	}, 'TechSmith Relay version');
 
 	/**
