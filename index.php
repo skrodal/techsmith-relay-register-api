@@ -2,7 +2,10 @@
 
 	$DATAPORTEN_CONFIG_PATH = '/var/www/etc/techsmith-relay-register/dataporten_config.js';
 	// TEST CONFIG (USES OLD DB)
-	$RELAY_CONFIG_PATH         = '/var/www/etc/techsmith-relay-register/relay_fusjonator_TEST.js';
+	$RELAY_CONFIG_PATH         = '/var/www/etc/techsmith-relay/relay_config_TEST.js';
+	// PROD CONFIG (USES CURRENT DB)
+	// $RELAY_CONFIG_PATH         = '/var/www/etc/techsmith-relay/relay_config_TEST.js';
+
 	$API_BASE_PATH             = '/api/techsmith-relay-register'; // Remember to update .htacces as well. Same with a '/' at the end...
 
 
