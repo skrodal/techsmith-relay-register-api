@@ -28,10 +28,12 @@
 		########################################################
 
 		public function userInfo($username){
-			return $this->relaySQL->query("
-				SELECT userName, userEmail
+			$sqlUserInfoResponse = $this->relaySQL->query("
+				SELECT *
 				FROM tblUser
 				WHERE userName = '$username'");
+
+			return empty($sqlUserInfoResponse) ? null : $sqlUserInfoResponse[0];
 		}
 
 		public function getRelayVersion() {
