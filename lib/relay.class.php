@@ -17,9 +17,10 @@
 		protected $config;
 		private $relaySQL;
 
-		function __construct($config) {
-			$this->config   = $config;
-			$this->relaySQL = new RelaySQLConnection($config);
+		function __construct() {
+			global $relayConfig;
+			$this->config   = $relayConfig;
+			$this->relaySQL = new RelaySQLConnection($relayConfig);
 		}
 
 		########################################################

@@ -1,13 +1,26 @@
 <?php
 
-	// Indicates use of old DB
-	$API_TEST_MODE = TRUE;
-	// Dataporten API GK
-	$dpConfigPath = '/var/www/etc/techsmith-relay-register/dataporten_config.js';
-	// Dataporten Client
-	$dpOauthConfigPath = '/var/www/etc/techsmith-relay-register/dataporten_oauth_config.js';
-	// TEST CONFIG (USES OLD DB) : PROD CONFIG (USES CURRENT DB)
-	$relayConfigPath = $API_TEST_MODE ? '/var/www/etc/techsmith-relay/relay_config_TEST.js' : '/var/www/etc/techsmith-relay/relay_config.js';
+	#####
+	# TEST MODE ON/OFF
+	#
+	# Indicates use of old DB
+	#####
+	$API_TEST_MODE = true;
+
+
+	#####
+	# Config paths
+	#####
+	// TEST CONFIG (USES OLD DB) :
+	// PROD CONFIG (USES CURRENT DB)
+	$relayConfigPath = $API_TEST_MODE ?
+		'/var/www/etc/techsmith-relay/relay_config_TEST.js' :
+		'/var/www/etc/techsmith-relay/relay_config.js';
+
+	// API Credentials used by Dataporten GK when accessing this API.
+	$dataportenConfig = json_decode(file_get_contents('/var/www/etc/techsmith-relay-register/dataporten_config.js'), true);
+	// CLIENT credentials when this API is talking to other Dataporten APIs (via GK) as a client.
+	$dataPortenClientConfig = json_decode(file_get_contents('/var/www/etc/techsmith-relay-register/dataporten_client_config.js'), true);
 	// Remember to update .htacces as well. Same with a '/' at the end...
 	$apiBasePath = '/api/techsmith-relay-register';
 	//
@@ -15,15 +28,15 @@
 
 	// Result or error responses
 	require_once($BASE . '/lib/response.class.php');
+	// Acts as a client to allow calls to other APIs, such as Kind and Dataporten Groups APIs
+	require_once($BASE . '/lib/dataportenclient.class.php');
+	$dataportenClient = new DataportenClient();
 	// Checks CORS and pulls Dataporten info from headers
 	require_once($BASE . '/lib/dataporten.class.php');
-	$dataportenConfig = json_decode(file_get_contents($dpConfigPath), true);
-	$dataporten       = new Dataporten($dataportenConfig);
+	$dataporten = new Dataporten();
 	//
 	require_once($BASE . '/lib/kind.class.php');
-	$dataPortenOauthConfig = json_decode(file_get_contents($dpOauthConfigPath), true);
-	$kind = new Kind($dataPortenOauthConfig);
-
+	$kind = new Kind();
 	//  http://altorouter.com
 	require_once($BASE . '/lib/router.class.php');
 	$router = new Router();
@@ -32,7 +45,7 @@
 	// Relay API
 	require_once($BASE . '/lib/relay.class.php');
 	$relayConfig = json_decode(file_get_contents($relayConfigPath), true);
-	$relay       = new Relay($relayConfig);
+	$relay       = new Relay();
 
 // ---------------------- DEFINE ROUTES ----------------------
 
@@ -44,15 +57,6 @@
 		global $router;
 		Response::result($router->getRoutes());
 	}, 'Routes listing');
-
-
-	$router->map('GET', '/kind/test/', function () {
-		global $router, $kind;
-		$kindRelayID = '1780362';
-		$orgSubscribers = json_decode(json_encode($kind->callAPI('service/' . $kindRelayID . '/subscribers/')));
-		Response::result($orgSubscribers);
-	}, 'Kind test');
-
 
 	/**
 	 * GET If we're using old database (for testing)
@@ -98,15 +102,25 @@
 
 	// -------------------- UTILS -------------------- //
 
-	// Restrict access to specified org
-	function verifyOrgAccess() {
+	// Check that the client is registered with required scopes to talk to this API
+	function verifyClientAccess() {
 		global $dataporten;
+		if(!$dataporten->hasAdminScope()) {
+			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (CLIENT is missing required scope). ');
+		}
+	}
 
-		if(!$dataporten->isUserSuperAdmin()) {
-			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (USER is missing required access rights). ');
+	// Check with Kind that:
+	// 1. that the logged on user is from an org which subscribes to Relay
+	// 2. account registration for the user's affiliation (employee/student) is allowed
+	function verifyUserAccess() {
+		global $kind, $dataporten;
+
+		if(!$kind->orgAllowed($dataporten->getUserOrgId())) {
+			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (CLIENT is missing required scope). ');
 		}
 
-		if(!$dataporten->hasAdminScope()) {
+		if(!$kind->affiliationAllowed($dataporten->getUserAffiliation())) {
 			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (CLIENT is missing required scope). ');
 		}
 	}
@@ -126,7 +140,8 @@
 	$match = $router->match();
 
 	if($match && is_callable($match['target'])) {
-		verifyOrgAccess();
+		// A client talking to us must have been granted access to the 'admin' scope.
+		verifyClientAccess();
 		sanitizeInput();
 		call_user_func_array($match['target'], $match['params']);
 	} else {

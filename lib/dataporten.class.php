@@ -6,40 +6,57 @@
 	 */
 	class Dataporten {
 
-		protected $userName, $clientHasAdminScope, $userOrg, $isUserSuperAdmin, $config;
+		private $dataportenClient, $dataPortenClientConfig, $clientHasAdminScope, $userName, $userAffiliation, $userOrgName, $userOrgId, $config;
 
-		function __construct($config) {
+		function __construct() {
+			global $dataportenConfig, $dataPortenClientConfig, $dataportenClient;
 			// Exits on OPTION call
 			$this->_checkCORS();
 			//
-			$this->config = $config;
+			$this->config = $dataportenConfig;
+			$this->dataportenClient = $dataportenClient;
+			$this->dataPortenClientConfig = $dataPortenClientConfig;
 			// Exits on incorrect credentials
 			$this->_checkGateKeeperCredentials();
-			// Get Feide username (exits if not found)
-			$this->userName            = $this->_getFeideUsername();
+			//
 			$this->clientHasAdminScope = $this->_hasDataportenScope('admin');
-			$this->userOrg             = explode('@', $this->userName); // Split username@org.no
-			$this->isUserSuperAdmin    = ( strcasecmp($this->userOrg[1], 'uninett.no') == 0 );
-			$this->userOrg             = explode('.', $this->userOrg[1]); // Split org.no
-			$this->userOrg             = $this->userOrg[0]; // org
+			$this->userName            = $this->_getFeideUsername(); // Exits if not found
+			$this->userAffiliation     = $this->_getFeideUserAffiliation();
+			$this->userOrgId           = $this->_getFeideUserOrgId($this->userName);
+			$this->userOrgName         = $this->_getFeideUserOrgName($this->userName);
 		}
 
-		public function getUserName() {
-			return $this->userName;
+		private function _checkCORS() {
+			// Access-Control headers are received during OPTIONS requests
+			if($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+				Response::result('CORS OK :-)');
+			}
 		}
 
-		public function hasAdminScope() {
-			return $this->clientHasAdminScope;
+		private function _checkGateKeeperCredentials() {
+			if(empty($_SERVER["PHP_AUTH_USER"]) || empty($_SERVER["PHP_AUTH_PW"])) {
+				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (Missing API Gatekeeper Credentials)');
+			}
+
+			// Gatekeeper. user/pwd is passed along by the Dataporten Gatekeeper and must matched that of the registered API:
+			if($_SERVER["PHP_AUTH_USER"] !== $this->config['user'] || $_SERVER["PHP_AUTH_PW"] !== $this->config['passwd']) {
+				// The status code will be set in the header
+				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (Incorrect API Gatekeeper Credentials)');
+			}
 		}
 
-		public function getUserOrg() {
-			return $this->userOrg;
-		}
+		private function _hasDataportenScope($scope) {
+			if(!isset($_SERVER["HTTP_X_DATAPORTEN_SCOPES"])) {
+				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (missing client scope)');
+			}
+			// Get the scope(s)
+			$scopes = $_SERVER["HTTP_X_DATAPORTEN_SCOPES"];
+			// Make array
+			$scopes = explode(',', $scopes);
 
-		public function isUserSuperAdmin(){
-			return $this->isUserSuperAdmin;
+			// True/false
+			return in_array($scope, $scopes);
 		}
-
 
 		/**
 		 * Gets the feide username (if present) from the Gatekeeper via HTTP_X_DATAPORTEN_USERID_SEC.
@@ -71,7 +88,6 @@
 				}
 			}
 
-
 			if(!isset($userIdSec)) {
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (*Feide* user not found)');
 			}
@@ -80,38 +96,35 @@
 			return $userIdSec;
 		}
 
+		private function _getFeideUserAffiliation() {
 
-		private function _hasDataportenScope($scope) {
-			if(!isset($_SERVER["HTTP_X_DATAPORTEN_SCOPES"])) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (missing client scope)');
-			}
-			// Get the scope(s)
-			$scopes = $_SERVER["HTTP_X_DATAPORTEN_SCOPES"];
-			// Make array
-			$scopes = explode(',', $scopes);
-
-			// True/false
-			return in_array($scope, $scopes);
 		}
 
-
-		private function _checkCORS() {
-			// Access-Control headers are received during OPTIONS requests
-			if($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-				Response::result('CORS OK :-)');
-			}
+		private function _getFeideUserOrgId($userName) {
+			$orgId = explode('@', $userName); // Split username@org.no
+			return $orgId[1]; // org.no
 		}
 
-		private function _checkGateKeeperCredentials() {
-			if(empty($_SERVER["PHP_AUTH_USER"]) || empty($_SERVER["PHP_AUTH_PW"])){
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (Missing API Gatekeeper Credentials)');
-			}
+		private function _getFeideUserOrgName($userName) {
+			$orgId   = explode('@', $userName); // Split username@org.no
+			$orgName = explode('.', $orgId); // Split org.no
+			return $orgName[0]; // org
+		}
 
-			// Gatekeeper. user/pwd is passed along by the Dataporten Gatekeeper and must matched that of the registered API:
-			if($_SERVER["PHP_AUTH_USER"] !== $this->config['user'] || $_SERVER["PHP_AUTH_PW"] !== $this->config['passwd']) {
-				// The status code will be set in the header
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (Incorrect API Gatekeeper Credentials)');
-			}
+		public function getUserName() {
+			return $this->userName;
+		}
+
+		public function hasAdminScope() {
+			return $this->clientHasAdminScope;
+		}
+
+		public function getUserOrgId() {
+			return $this->userOrgId;
+		}
+
+		public function getUserOrgName() {
+			return $this->userOrgName;
 		}
 
 	}

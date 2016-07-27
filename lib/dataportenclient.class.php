@@ -11,16 +11,18 @@
 	
 	session_start();
 
-	class DataportenOAuth {
+	class DataportenClient {
 
-		protected $ep_token = 'https://auth.dataporten.no/oauth/token/';
-		protected $config 	= null;
-		protected $token 	= null;
+		private $ep_token = 'https://auth.dataporten.no/oauth/token/';
+		private $ep_groups = 'https://groups-api.dataporten.no/groups/';
+		private $config 	= null;
+		private $token 	= null;
 		
 		//
-		function __construct($config) {
-			//
-			$this->config = $config;
+		function __construct() {
+			global $dataPortenClientConfig;
+
+			$this->config = $dataPortenClientConfig;
 			// Gets/ (or sets) a token
 			$this->checkTokenValidity();
 		}
