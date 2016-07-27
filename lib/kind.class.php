@@ -1,4 +1,6 @@
 <?php
+	require_once($BASE . '/lib/dataportenoauth.class.php');
+
 	class Kind {
 		// DATAPORTEN OAuth implementation
 		protected $dataporten;
