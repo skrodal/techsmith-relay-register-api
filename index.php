@@ -20,6 +20,7 @@
 	$dataportenConfig = json_decode(file_get_contents($dpConfigPath), true);
 	$dataporten       = new Dataporten($dataportenConfig);
 	//
+	require_once($BASE . '/lib/dataportenoauth.class.php');
 	$dataPortenOauthConfig = json_decode(file_get_contents($dpOauthConfigPath), true);
 	$kind = new Kind($dataPortenOauthConfig);
 
