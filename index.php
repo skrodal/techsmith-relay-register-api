@@ -2,12 +2,14 @@
 
 	// Indicates use of old DB
 	$API_TEST_MODE = TRUE;
-	// 
-	$DATAPORTEN_CONFIG_PATH = '/var/www/etc/techsmith-relay-register/dataporten_config.js';
+	// Dataporten API GK
+	$dpConfigPath = '/var/www/etc/techsmith-relay-register/dataporten_config.js';
+	// Dataporten Client
+	$dpOauthConfigPath = '/var/www/etc/techsmith-relay-register/dataporten_oauth_config.js';
 	// TEST CONFIG (USES OLD DB) : PROD CONFIG (USES CURRENT DB)
-	$RELAY_CONFIG_PATH = $API_TEST_MODE ? '/var/www/etc/techsmith-relay/relay_config_TEST.js' : '/var/www/etc/techsmith-relay/relay_config.js';
-	//
-	$API_BASE_PATH = '/api/techsmith-relay-register'; // Remember to update .htacces as well. Same with a '/' at the end...
+	$relayConfigPath = $API_TEST_MODE ? '/var/www/etc/techsmith-relay/relay_config_TEST.js' : '/var/www/etc/techsmith-relay/relay_config.js';
+	// Remember to update .htacces as well. Same with a '/' at the end...
+	$apiBasePath = '/api/techsmith-relay-register';
 	//
 	$BASE = dirname(__FILE__);
 
@@ -15,17 +17,21 @@
 	require_once($BASE . '/lib/response.class.php');
 	// Checks CORS and pulls Dataporten info from headers
 	require_once($BASE . '/lib/dataporten.class.php');
-	$dataporten_config = json_decode(file_get_contents($DATAPORTEN_CONFIG_PATH), true);
-	$dataporten        = new Dataporten($dataporten_config);
+	$dataportenConfig = json_decode(file_get_contents($dpConfigPath), true);
+	$dataporten       = new Dataporten($dataportenConfig);
+	//
+	$dataPortenOauthConfig = json_decode(file_get_contents($dpOauthConfigPath), true);
+	$kind = new Kind($dataPortenOauthConfig);
+
 	//  http://altorouter.com
 	require_once($BASE . '/lib/router.class.php');
 	$router = new Router();
 	// $router->addMatchTypes(array('userlist' => '[0-9A-Za-z\[\]@.,%]++'));
-	$router->setBasePath($API_BASE_PATH);
+	$router->setBasePath($apiBasePath);
 	// Relay API
 	require_once($BASE . '/lib/relay.class.php');
-	$relay_config  = json_decode(file_get_contents($RELAY_CONFIG_PATH), true);
-	$relay         = new Relay($relay_config);
+	$relayConfig = json_decode(file_get_contents($relayConfigPath), true);
+	$relay       = new Relay($relayConfig);
 
 // ---------------------- DEFINE ROUTES ----------------------
 
@@ -37,6 +43,14 @@
 		global $router;
 		Response::result($router->getRoutes());
 	}, 'Routes listing');
+
+
+	$router->map('GET', '/kind/test/', function () {
+		global $router, $kind;
+		$kindRelayID = '1780362';
+		$orgSubscribers = json_decode(json_encode($kind->callAPI('service/' . $kindRelayID . '/subscribers/')));
+		Response::result($router->getRoutes());
+	}, 'Kind test');
 
 
 	/**
@@ -121,8 +135,8 @@
 
 
 	function get_path_info() {
-		global $API_BASE_PATH;
+		global $apiBasePath;
 		$requestUrl = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
 
-		return substr($requestUrl, strlen($API_BASE_PATH));
+		return substr($requestUrl, strlen($apiBasePath));
 	}

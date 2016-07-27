@@ -48,15 +48,12 @@
 				FROM tblUser
 				WHERE userName = '$username'");
 
-			return empty($sqlUserInfoResponse) ? null : $sqlUserInfoResponse[0];
+			return empty($sqlUserInfoResponse) ? false : $sqlUserInfoResponse[0];
 		}
 
 		public function createUser($userDetails){
 			// TODO
 		}
-
-
-
 	}
 
 
