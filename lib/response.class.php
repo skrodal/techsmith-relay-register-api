@@ -37,7 +37,7 @@ class Response {
 		exit( json_encode(
 			array(
 				'status' => false,
-				'message' => '[RelayFusjonatorAPI]: ' . $error
+				'message' => '[TechSmith-Relay-Register]: ' . $error
 			)
 		));
 	}
