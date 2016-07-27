@@ -98,6 +98,7 @@
 
 		private function _getFeideUserAffiliation() {
 			$userGroups = $this->dataportenClient->get($this->dataPortenClientConfig['dataporten-groups']);
+			error_log('GROUPS:' . $this->dataPortenClientConfig['dataporten-groups']);
 			error_log(json_encode($userGroups));
 		}
 
@@ -108,7 +109,7 @@
 
 		private function _getFeideUserOrgName($userName) {
 			$orgId   = explode('@', $userName); // Split username@org.no
-			$orgName = explode('.', $orgId); // Split org.no
+			$orgName = explode('.', $orgId[1]); // Split org.no
 			return $orgName[0]; // org
 		}
 
