@@ -14,7 +14,6 @@
 	class DataportenClient {
 
 		private $ep_token = 'https://auth.dataporten.no/oauth/token/';
-		private $ep_groups = 'https://groups-api.dataporten.no/groups/';
 		private $config 	= null;
 		private $token 	= null;
 		

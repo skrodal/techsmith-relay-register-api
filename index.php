@@ -49,6 +49,11 @@
 
 // ---------------------- DEFINE ROUTES ----------------------
 
+	$router->map('GET', '/kind/test/', function () {
+		global $router, $kind, $relayConfig;
+		$orgSubscribers = json_decode(json_encode($kind->callAPI('service/' . $relayConfig['kind_id'] . '/subscribers/')));
+		Response::result($orgSubscribers);
+	}, 'Kind test');
 
 	/**
 	 * GET all REST routes

@@ -3,5 +3,6 @@
 		"client_id"         : "same as client talking to this api",
 		"client_secret"     : "same as client talking to this api",
 		"ecampus-kind"	    : "path to dataporten api this api wants to talk to",
+		"dataporten-groups" : "https://groups-api.dataporten.no/groups/",
 		"..."               : "..."
 }
