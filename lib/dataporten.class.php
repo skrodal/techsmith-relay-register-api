@@ -97,7 +97,8 @@
 		}
 
 		private function _getFeideUserAffiliation() {
-
+			$userGroups = $this->dataportenClient->get($this->dataPortenClientConfig['dataporten-groups']);
+			error_log(json_encode($userGroups));
 		}
 
 		private function _getFeideUserOrgId($userName) {
