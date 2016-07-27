@@ -50,7 +50,7 @@
 		global $router, $kind;
 		$kindRelayID = '1780362';
 		$orgSubscribers = json_decode(json_encode($kind->callAPI('service/' . $kindRelayID . '/subscribers/')));
-		Response::result($router->getRoutes());
+		Response::result($orgSubscribers);
 	}, 'Kind test');
 
 
