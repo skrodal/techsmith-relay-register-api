@@ -11,9 +11,6 @@
 	require_once('relay/autoload.php');
 
 	use Relay\Router\Router;
-	use Relay\Utils\Utils;
-
+	
 	// Init
 	$router = new Router();
-	// GET/POST
-	Utils::sanitizeInput();

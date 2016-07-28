@@ -14,6 +14,7 @@
 	use Relay\Auth\DataportenClient;
 	use Relay\Conf\Config;
 	use Relay\Utils\Response;
+	use Relay\Utils\Utils;
 	use Relay\Vendor\AltoRouter;
 
 
@@ -91,7 +92,7 @@
 			$match = $this->altoRouter->match();
 
 			if($match && is_callable($match['target'])) {
-				sanitizeInput();
+				Utils::sanitizeInput();
 				call_user_func_array($match['target'], $match['params']);
 			} else {
 				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . " The requested resource route could not be found.");
