@@ -73,7 +73,7 @@
 				$userAccount['profile_id']  = $profileID;
 				//
 				$userAccount['passwordSalt']   = $this->generateSalt();
-				$userAccount['passwordHashed'] = hashPassword($userAccount['userPassword'], $userAccount['passwordSalt']);;
+				$userAccount['passwordHashed'] = $this->hashPassword($userAccount['userPassword'], $userAccount['passwordSalt']);;
 
 
 				// TODO = CHECK BEFORE TESTING!
@@ -159,7 +159,7 @@
 			$sqlUserInfoResponse = $this->relaySQL->query("
 				SELECT userName, userEmail, userDisplayName
 				FROM tblUser
-				WHERE userName = '$this->username'");
+				WHERE userName = '" . $this->dataporten->getUserName() . "'");
 
 			return empty($sqlUserInfoResponse) ? false : $sqlUserInfoResponse[0];
 		}
