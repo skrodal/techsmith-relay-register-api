@@ -6,15 +6,16 @@
 	namespace Relay\Api;
 
 	use Relay\Auth\Dataporten;
+	use Relay\Conf\Config;
 	use Relay\Database\RelaySQLConnection;
 
-
 	class Relay {
-		private $relaySQLConnection, $dataporten;
+		private $relaySQLConnection, $dataporten, $config;
 
 		function __construct(Dataporten $dataPorten) {
-			//
-			$this->relaySQLConnection = new RelaySQLConnection();
+			// Will exit on fail
+			$this->config             = Config::getConfigFromFile(Config::get('auth')['relay_sql']);
+			$this->relaySQLConnection = new RelaySQLConnection($this->config);
 			$this->dataporten         = $dataPorten;
 		}
 
@@ -44,11 +45,11 @@
 			if(!empty($query)) {
 				foreach($query as $key => $info) {
 					switch($query[$key]['userAffiliation']) {
-						case $this->relaySQLConnection->employeeProfileId():
+						case $this->employeeProfileId():
 							$query[$key]['userAffiliation'] = 'employee';
 
 							return $query[$key];
-						case $this->relaySQLConnection->studentProfileId():
+						case $this->studentProfileId():
 							$query[$key]['userAffiliation'] = 'student';
 
 							return $query[$key];
@@ -57,6 +58,14 @@
 			} else {
 				return false;
 			}
+		}
+
+		public function employeeProfileId() {
+			return (int)$this->config['employeeProfileId'];
+		}
+
+		public function studentProfileId() {
+			return (int)$this->config['studentProfileId'];
 		}
 
 	}

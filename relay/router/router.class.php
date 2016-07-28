@@ -23,24 +23,29 @@
 		private $altoRouter, $relay, $kind, $dataporten, $dataportenClient;
 
 		function __construct() {
-			// Gatekeeper and provider of useful info
-			$this->dataporten = new Dataporten();
-			//
-			$this->dataportenClient = new DataportenClient();
-			//
-			$this->relay = new Relay($this->dataporten);
-			//
-			$this->kind = new Kind($this->dataportenClient);
 			### 	  ALTO ROUTER 		###
 			$this->altoRouter = new AltoRouter();
 			$this->altoRouter->setBasePath(Config::get('altoRouter')['api_base_path']);
-			//
+
+			### 	  DATAPORTEN 		###
+			$this->dataporten = new Dataporten();
+			$this->dataportenClient = new DataportenClient();
+
+			### 	  RELAY  		    ###
+			$this->relay = new Relay($this->dataporten);
+
+			### 	  KIND 		        ###
+			$this->kind = new Kind($this->dataportenClient);
+
+			// Make all GET routes available
 			$this->declareGetRoutes();
+			// Make all POST routes available
 			$this->declarePostRoutes();
+			// Make all DEV routes available if admin user is logged on
 			if($this->dataporten->isSuperAdmin()) {
 				$this->declareDevRoutes();
 			}
-			//
+			// Activate routes
 			$this->matchRoutes();
 
 		}
@@ -57,7 +62,7 @@
 				}, 'Testmode on/off.'),
 
 				array('GET', '/kind/test/', function () {
-					Response::result(true, "TEST KIND");
+					$this->kind->callAPI('service/' . $this->kind->['kind_id'] . '/subscribers/');
 				}, 'Test kind.'),
 
 				array('GET', '/version/', function () {

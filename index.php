@@ -11,6 +11,6 @@
 	require_once('relay/autoload.php');
 
 	use Relay\Router\Router;
-	
+
 	// Init
 	$router = new Router();

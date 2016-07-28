@@ -1,4 +1,5 @@
 {
+	"info"                  : "Sample config file",
 	"host"                  : "...",
 	"db"                    : "...",
 	"user_write"            : "...",

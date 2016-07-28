@@ -24,11 +24,11 @@
 
 		//
 		function __construct() {
-			$this->config = file_get_contents(Config::get('auth')['dataporten_client']);
+			$this->config = Config::getConfigFromFile(Config::get('auth')['dataporten_client']);
 		}
 
-		public function getConfig($key) {
-			return $this->config[$key];
+		public function getConfig() {
+			return $this->config;
 		}
 
 		public function reset() {
@@ -73,10 +73,10 @@
 
 		protected function getToken() {
 			// Sanity check
-			if(empty($this->config['client_id'])) {
+			if(empty($this->config['dp_auth']['client_id'])) {
 				throw new Exception('Configuration [client_id] is REQUIRED but not set');
 			}
-			if(empty($this->config['client_secret'])) {
+			if(empty($this->config['dp_auth']['client_secret'])) {
 				throw new Exception('Configuration [client_id] is REQUIRED but not set');
 			}
 
@@ -88,7 +88,7 @@
 					'method'  => 'POST',
 					'header'  =>
 						"Content-type: application/x-www-form-urlencoded\r\n" .
-						"Authorization: Basic " . base64_encode($this->config['client_id'] . ':' . $this->config['client_secret']),
+						"Authorization: Basic " . base64_encode($this->config['dp_auth']['client_id'] . ':' . $this->config['dp_auth']['client_secret']),
 					'content' => http_build_query(["grant_type" => "client_credentials"])
 				)
 			);

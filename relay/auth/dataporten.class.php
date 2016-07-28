@@ -12,12 +12,8 @@
 		function __construct() {
 			// Exits on OPTION call
 			$this->_checkCORS();
-			// Dataporten username and pass
-			$this->config = file_get_contents(Config::get('auth')['dataporten']);
-			if($this->config === false) {
-				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: Dataporten config.');
-			}
-			$this->config = json_decode($this->config, true);
+			// Dataporten username and pass (will exit on fail)
+			$this->config = Config::getConfigFromFile(Config::get('auth')['dataporten']);
 			// Exits on incorrect credentials
 			$this->_checkGateKeeperCredentials();
 			//

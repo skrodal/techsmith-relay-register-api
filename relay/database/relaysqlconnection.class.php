@@ -1,7 +1,6 @@
 <?php
 	namespace Relay\Database;
 
-	use Relay\Conf\Config;
 	use Relay\Utils\Response;
 	use Relay\Utils\Utils;
 
@@ -11,20 +10,8 @@
 
 		private $connection, $config;
 
-		function __construct() {
-			// Get connection conf
-			$this->config = $this->getConfig();
-		}
-
-		private function getConfig() {
-			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
-			// Sanity
-			if($this->config === false) {
-				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: SQL Config.');
-			}
-
-			// Connect username and pass
-			return json_decode($this->config, true);
+		function __construct($config) {
+			$this->config = $config;
 		}
 
 		/**
@@ -90,11 +77,4 @@
 			Utils::log("DB CLOSED");
 		}
 
-		public function employeeProfileId() {
-			return (int)$this->config['employeeProfileId'];
-		}
-
-		public function studentProfileId() {
-			return (int)$this->config['studentProfileId'];
-		}
 	}

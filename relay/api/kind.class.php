@@ -13,6 +13,6 @@
 
 		// Access routes in the Kind API
 		public function callAPI($route) {
-			return $this->dataportenClient->get($this->dataportenClient->getConfig('ecampus-kind') . $route);
+			return $this->dataportenClient->get($this->dataportenClient->getConfig()['api_endpoints']['kind'] . $route);
 		}
 	}
