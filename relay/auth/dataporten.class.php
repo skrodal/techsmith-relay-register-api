@@ -68,7 +68,7 @@
 		}
 
 		public function isSuperAdmin() {
-			return strcasecmp($this->userOrg(), "uninett.no") === 0;
+			return strcasecmp($this->userOrgId(), "uninett.no") === 0;
 		}
 
 		public function userOrgId() {
