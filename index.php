@@ -88,14 +88,6 @@
 	}, 'User account info (false if no account)');
 
 	/**
-	 * GET User account ID
-	 */
-	$router->map('GET', '/me/id/', function () {
-		global $relay;
-		Response::result($relay->getUserId());
-	}, 'User account ID (false if no account)');
-
-	/**
 	 * GET Template
 	 *
 	 * $router->map('GET', '/PATH/[i:iD]/status/', function ($iD) {

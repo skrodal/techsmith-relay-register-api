@@ -6,16 +6,15 @@
 	 */
 	class Dataporten {
 
-		private $dataportenClient, $dataPortenClientConfig, $clientHasAdminScope, $userName, $userAffiliation, $userOrgName, $userOrgId, $config;
+		private $config, $clientHasAdminScope;
+		private $userName, $userOrgName, $userOrgId;
 
 		function __construct() {
-			global $dataportenConfig, $dataPortenClientConfig, $dataportenClient;
+			global $dataportenConfig;
 			// Exits on OPTION call
 			$this->_checkCORS();
 			//
 			$this->config = $dataportenConfig;
-			$this->dataportenClient = $dataportenClient;
-			$this->dataPortenClientConfig = $dataPortenClientConfig;
 			// Exits on incorrect credentials
 			$this->_checkGateKeeperCredentials();
 			//
@@ -108,6 +107,15 @@
 
 		public function getUserName() {
 			return $this->userName;
+		}
+
+		public function getUserDisplayName(){
+			// TODO!
+			return null;
+		}
+		public function getUserEmail(){
+			// TODO!
+			return null;
 		}
 
 		public function hasAdminScope() {
