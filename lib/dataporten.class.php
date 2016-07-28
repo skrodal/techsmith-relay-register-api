@@ -21,7 +21,6 @@
 			//
 			$this->clientHasAdminScope = $this->_hasDataportenScope('admin');
 			$this->userName            = $this->_getFeideUsername(); // Exits if not found
-			$this->userAffiliation     = $this->_getFeideUserAffiliation();
 			$this->userOrgId           = $this->_getFeideUserOrgId($this->userName);
 			$this->userOrgName         = $this->_getFeideUserOrgName($this->userName);
 		}
@@ -94,13 +93,6 @@
 
 			// Either null or 'username@org.no'
 			return $userIdSec;
-		}
-
-		private function _getFeideUserAffiliation() {
-			// Request the user's groups
-			$userGroups = $this->dataportenClient->get($this->dataPortenClientConfig['dataporten-groups'] . 'me/groups');
-			error_log('GROUPS:' . $this->dataPortenClientConfig['dataporten-groups']);
-			error_log(json_encode($userGroups));
 		}
 
 		private function _getFeideUserOrgId($userName) {

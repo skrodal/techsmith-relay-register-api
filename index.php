@@ -84,7 +84,7 @@
 	 */
 	$router->map('GET', '/me/', function () {
 		global $relay, $dataporten;
-		Response::result($relay->getUserInfo($dataporten->getUserName()));
+		Response::result($relay->getUserInfo());
 	}, 'User account info (false if no account)');
 
 	/**
@@ -101,42 +101,37 @@
 	 */
 	$router->map('POST', '/me/create/', function () {
 		global $relay;
-		Response::result($relay->createUser($_POST));
+		// Double check POSTed info before we create the user
+		$this->verifyUserAccess();
+		//
+		$accountDetails = [
+			'displayName' => 'from Dataporten',
+			'userName'    => 'from Dataporten',
+			'affiliation' => 'from POST!!!'
+		];
+		Response::result($relay->createUser($accountDetails));
 	}, 'Create a user.');
 
 
 	// -------------------- UTILS -------------------- //
 
-	// Check that the client is registered with required scopes to talk to this API
-	function verifyClientAccess() {
-		global $dataporten;
-		if(!$dataporten->hasAdminScope()) {
-			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (CLIENT is missing required scope). ');
-		}
-	}
 
 	// Check with Kind that:
 	// 1. that the logged on user is from an org which subscribes to Relay
 	// 2. account registration for the user's affiliation (employee/student) is allowed
 	function verifyUserAccess() {
 		global $kind, $dataporten;
+		// TODO: Get $userAffiliation from POST
 
 		if(!$kind->orgAllowed($dataporten->getUserOrgId())) {
 			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (CLIENT is missing required scope). ');
 		}
 
-		if(!$kind->affiliationAllowed($dataporten->getUserAffiliation())) {
-			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (CLIENT is missing required scope). ');
+		if(!$kind->affiliationAllowed($userAffiliation)) {
+			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (USER affiliation does not have the right to create an account). ');
 		}
 	}
 
-	/**
-	 * http://stackoverflow.com/questions/4861053/php-sanitize-values-of-a-array/4861211#4861211
-	 */
-	function sanitizeInput() {
-		$_GET  = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
-		$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-	}
 
 	// -------------------- ./UTILS -------------------- //
 
@@ -154,10 +149,25 @@
 	}
 	// ---------------------- /.MATCH AND EXECUTE REQUESTED ROUTE ----------------------
 
+	// Check that the client is registered with required scopes to talk to this API
+	function verifyClientAccess() {
+		global $dataporten;
+		if(!$dataporten->hasAdminScope()) {
+			Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' 401 Unauthorized (CLIENT is missing required scope). ');
+		}
+	}
 
 	function get_path_info() {
 		global $apiBasePath;
 		$requestUrl = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
 
 		return substr($requestUrl, strlen($apiBasePath));
+	}
+
+	/**
+	 * http://stackoverflow.com/questions/4861053/php-sanitize-values-of-a-array/4861211#4861211
+	 */
+	function sanitizeInput() {
+		$_GET  = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+		$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 	}

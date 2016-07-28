@@ -20,10 +20,7 @@
 		//
 		function __construct() {
 			global $dataPortenClientConfig;
-
 			$this->config = $dataPortenClientConfig;
-			// Gets/ (or sets) a token
-			$this->checkTokenValidity();
 		}
 
 		/**
@@ -96,6 +93,8 @@
 
 		// Make an API call
 		public function get($url) {
+			// Gets/ (or sets) a token
+			$this->checkTokenValidity();
 			return $this->protectedRequest($url);
 		}
 
