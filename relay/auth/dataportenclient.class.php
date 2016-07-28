@@ -73,11 +73,11 @@
 
 		protected function getToken() {
 			// Sanity check
-			if(empty($this->config['dp_auth']['client_id'])) {
-				throw new Exception('Configuration [client_id] is REQUIRED but not set');
+			if(empty($this->config->dp_auth['client_id'])) {
+				Response::error(403, 'Configuration [client_id] is REQUIRED but not set');
 			}
-			if(empty($this->config['dp_auth']['client_secret'])) {
-				throw new Exception('Configuration [client_id] is REQUIRED but not set');
+			if(empty($this->config->dp_auth['client_secret'])) {
+				Response::error(403, 'Configuration [client_secret] is REQUIRED but not set');
 			}
 
 			// error_log('Getting new token');
