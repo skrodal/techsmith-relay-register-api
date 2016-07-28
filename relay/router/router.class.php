@@ -62,7 +62,7 @@
 
 		private function declareDevRoutes() {
 			if($this->dataporten->isSuperAdmin()) {
-				$this->altoRouterrouter->addRoutes([
+				$this->altoRouter->addRoutes([
 					array('GET', '/dev/something/', function () {
 						Response::result(true, "SOMETHING");
 					}, 'Test route.')
