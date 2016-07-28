@@ -26,7 +26,8 @@
 		#
 		// /service/ endpoint - not sure if needed...
 		public function getServiceVersion() {
-			return $this->relaySQLConnection->query("SELECT versValue FROM tblVersion")[0];
+			$version = $this->relaySQLConnection->query("SELECT versValue FROM tblVersion")[0];
+			return $version['versValue'];
 		}
 
 
