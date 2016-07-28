@@ -26,7 +26,8 @@
 		function __construct() {
 			$this->config = Config::getConfigFromFile(Config::get('auth')['dataporten_client']);
 
-			error_log($this->config->dp_auth->client_id);
+			error_log($this->config->dp_auth['client_id']);
+			error_log($this->config['dp_auth']['client_id']);
 		}
 
 		public function getConfig() {
