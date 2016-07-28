@@ -4,6 +4,8 @@
 
 	// Writes to development DB if true!!
 	$devMode = true;
+	// Error logging
+	$debug = false;
 	// Remember to update .htacces as well:
 	$apiBasePath = '/api/techsmith-relay-register';
 	// Path to config files specific to this API only
@@ -29,7 +31,7 @@
 				'relay_sql'         => $relayConfigPath
 			],
 			'utils'      => [
-				'debug' => true
+				'debug' => $debug
 			]
 		]);
 
