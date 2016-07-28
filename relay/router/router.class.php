@@ -35,6 +35,7 @@
 			$this->altoRouter->setBasePath(Config::get('altoRouter')['api_base_path']);
 			//
 			$this->declareGetRoutes();
+			$this->declarePostRoutes();
 			if($this->dataporten->isSuperAdmin()) {
 				$this->declareDevRoutes();
 			}
@@ -56,7 +57,15 @@
 
 				array('GET', '/me/', function () {
 					Response::result(true, $this->relay->getUser());
-				}, 'List all orgs (Scope: admin).'),
+				}, 'User account details..'),
+			]);
+		}
+
+		private function declarePostRoutes() {
+			$this->altoRouter->addRoutes([
+				array('GET', '/me/create/', function () {
+					Response::result(true, $this->relay->getUser());
+				}, 'Create user account.'),
 			]);
 		}
 
@@ -81,11 +90,5 @@
 			}
 		}
 
-		private function declarePostRoutes() {
-			$this->altoRouter->addRoutes([
-				array('GET', '/me/create/', function () {
-					Response::result(true, $this->relay->getUser());
-				}, 'List all orgs (Scope: admin).'),
-			]);
-		}
+
 	}
