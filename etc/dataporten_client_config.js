@@ -1,5 +1,5 @@
 {
-	"description"		: "Credentials for `client` techsmith-relay-register. Used to talk to (registered) Dataporten APIs that do not require user auth.",
+	"description"		: "Credentials for _client_ techsmith-relay-register. Used to talk to (registered) Dataporten APIs that do not require user auth.",
 	"dp_auth" :
 	{
 		"client_id"         : "same as client talking to this api",
