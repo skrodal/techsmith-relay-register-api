@@ -5,6 +5,7 @@
 	 * @author Simon Skrødal
 	 * @since  July 2016
 	 */
+	namespace RelayRegister;
 
 	###	   LOAD DEPENDENCIES	###
 	require_once('relay/autoload.php');
