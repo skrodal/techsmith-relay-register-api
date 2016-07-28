@@ -13,7 +13,7 @@
 	use Relay\Router\Router;
 	use Relay\Utils\Utils;
 
-	// GET/POST
-	Utils::sanitizeInput();
 	// Init
 	$router = new Router();
+	// GET/POST
+	Utils::sanitizeInput();
