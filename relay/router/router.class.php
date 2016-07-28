@@ -60,6 +60,14 @@
 			]);
 		}
 
+		private function declarePostRoutes() {
+			$this->altoRouter->addRoutes([
+				array('GET', '/me/create/', function () {
+					Response::result(true, $this->relay->getUser());
+				}, 'List all orgs (Scope: admin).'),
+			]);
+		}
+
 		private function declareDevRoutes() {
 			if($this->dataporten->isSuperAdmin()) {
 				$this->altoRouterrouter->addRoutes([
