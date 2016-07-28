@@ -6,5 +6,5 @@
 	"pass"                  : "...",
 	"employeeProfileId"     : 3,
 	"studentProfileId"      : 4,
-	"kind_id"               : "service ID in kind"
+	"kindId"                : "service ID in kind"
 }

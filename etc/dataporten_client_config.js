@@ -7,6 +7,7 @@
 	},
 	"api_endpoints" :
 	{
-		"kind"  : "path to dataporten api this api wants to talk to"
+		"kind"  : "path to dataporten api this api wants to talk to",
+		"..."   : "any others..."
 	}
 }

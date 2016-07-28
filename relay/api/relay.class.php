@@ -68,4 +68,8 @@
 			return (int)$this->config['studentProfileId'];
 		}
 
+		public function kindId() {
+			return $this->config['kindId'];
+		}
+
 	}
