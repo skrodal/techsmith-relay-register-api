@@ -25,9 +25,6 @@
 		//
 		function __construct() {
 			$this->config = Config::getConfigFromFile(Config::get('auth')['dataporten_client']);
-
-			error_log($this->config->dp_auth['client_id']);
-			error_log($this->config['dp_auth']['client_id']);
 		}
 
 		public function getConfig() {
@@ -37,8 +34,6 @@
 		public function reset() {
 			$this->setToken(NULL, NULL);
 		}
-
-		//
 
 		public function get($url) {
 			// Gets/ (or sets) a token
@@ -76,10 +71,10 @@
 
 		protected function getToken() {
 			// Sanity check
-			if(empty($this->config->dp_auth->client_id)) {
+			if(empty($this->config['dp_auth']['client_id'])) {
 				Response::error(403, 'Configuration [client_id] is REQUIRED but not set');
 			}
-			if(empty($this->config->dp_auth['client_secret'])) {
+			if(empty($this->config['dp_auth']['client_secret'])) {
 				Response::error(403, 'Configuration [client_secret] is REQUIRED but not set');
 			}
 
