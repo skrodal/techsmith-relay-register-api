@@ -1,4 +1,12 @@
 <?php
+
+	namespace RelayRegister\Auth;
+
+	session_start();
+
+	use RelayRegister\Conf\Config;
+	use RelayRegister\Utils\Response;
+
 	/**
 	 * Dataporten OAuth Client Credentials Grant
 	 *
@@ -8,9 +16,6 @@
 	 *
 	 * @author Simon Skrødal
 	 */
-
-	session_start();
-
 	class DataportenClient {
 
 		private $ep_token = 'https://auth.dataporten.no/oauth/token/';
@@ -19,8 +24,7 @@
 
 		//
 		function __construct() {
-			global $dataPortenClientConfig;
-			$this->config = $dataPortenClientConfig;
+			$this->config = file_get_contents(Config::get('auth')['dataporten_client']);
 		}
 
 		public function getConfig($key) {
@@ -31,9 +35,9 @@
 			$this->setToken(NULL, NULL);
 		}
 
-		// 
+		//
 
-		public function isAuthenticated() {
+		protected function isAuthenticated() {
 			return $this->token !== NULL;
 		}
 
@@ -46,12 +50,12 @@
 			return $this->protectedRequest($url);
 		}
 
-		// 
+		//
 
 		/**
 		 * Ensures that a token exists for this sessionb and that it is valid (not expired) - create new if any issues.
 		 */
-		private function checkTokenValidity() {
+		protected function checkTokenValidity() {
 			// Missing token info
 			if(empty($_SESSION['token']) || empty($_SESSION['token_expires_in']) || empty($_SESSION['token_created'])) {
 				// error_log('Missing token info - getting new.');

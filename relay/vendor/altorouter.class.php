@@ -1,11 +1,11 @@
 <?php
-
+	namespace RelayRegister\Vendor;
 	/**
-	 * Class Router
+	 * Class AltoRouter
 	 *
 	 * https://github.com/dannyvankooten/AltoRouter/blob/master/AltoRouter.php
 	 */
-	class Router {
+	class AltoRouter {
 		protected $routes = array();
 		protected $namedRoutes = array();
 		protected $basePath = '';
@@ -16,9 +16,9 @@
 			'*'  => '.+?',
 			'**' => '.++',
 			''   => '[^/\.]++'
-		);
+			);
 		/**
-		 * Create router in one call from config.
+		 * Create altoRouter in one call from config.
 		 *
 		 * @param array $routes
 		 * @param string $basePath
@@ -48,8 +48,7 @@
 		 *
 		 * @param array $routes
 		 *
-		 * @throws Exception
-		 * @return void
+		 * @throws \Exception
 		 * @author Koen Punt
 		 */
 		public function addRoutes($routes){
@@ -84,7 +83,7 @@
 		 * @param mixed  $target The target where this route should point to. Can be anything.
 		 * @param string $name   Optional name of this route. Supply if you want to reverse route this url in your application.
 		 *
-		 * @throws Exception
+		 * @throws \Exception
 		 */
 		public function map($method, $route, $target, $name = null) {
 			$this->routes[] = array($method, $route, $target, $name);
@@ -106,7 +105,7 @@
 		 * @param string $routeName The name of the route.
 		 * @param array  $params    @params Associative array of parameters to replace placeholders with.
 		 *
-		 * @throws Exception
+		 * @throws \Exception
 		 * @return string The URL of the route with named parameters in place.
 		 */
 		public function generate($routeName, array $params = array()) {
@@ -192,35 +191,35 @@
 						} elseif (false === $regex) {
 							$c = $n;
 							$regex = $c === '[' || $c === '(' || $c === '.';
-							if (false === $regex && false !== isset($_route[$i+1])) {
-								$n = $_route[$i + 1];
-								$regex = $n === '?' || $n === '+' || $n === '*' || $n === '{';
+								if (false === $regex && false !== isset($_route[$i+1])) {
+									$n = $_route[$i + 1];
+									$regex = $n === '?' || $n === '+' || $n === '*' || $n === '{';
+								}
+								if (false === $regex && $c !== '/' && (!isset($requestUrl[$j]) || $c !== $requestUrl[$j])) {
+									continue 2;
+								}
+								$j++;
 							}
-							if (false === $regex && $c !== '/' && (!isset($requestUrl[$j]) || $c !== $requestUrl[$j])) {
-								continue 2;
+							$route .= $_route[$i++];
+						}
+						$regex = $this->compileRoute($route);
+						$match = preg_match($regex, $requestUrl, $params);
+					}
+					if(($match == true || $match > 0)) {
+						if($params) {
+							foreach($params as $key => $value) {
+								if(is_numeric($key)) unset($params[$key]);
 							}
-							$j++;
 						}
-						$route .= $_route[$i++];
+						return array(
+							'target' => $target,
+							'params' => $params,
+							'name' => $name
+							);
 					}
-					$regex = $this->compileRoute($route);
-					$match = preg_match($regex, $requestUrl, $params);
 				}
-				if(($match == true || $match > 0)) {
-					if($params) {
-						foreach($params as $key => $value) {
-							if(is_numeric($key)) unset($params[$key]);
-						}
-					}
-					return array(
-						'target' => $target,
-						'params' => $params,
-						'name' => $name
-					);
-				}
+				return false;
 			}
-			return false;
-		}
 		/**
 		 * Compile the regex for a given route (EXPENSIVE)
 		 */
@@ -239,13 +238,13 @@
 					$pattern = '(?:'
 						. ($pre !== '' ? $pre : null)
 						. '('
-						. ($param !== '' ? "?P<$param>" : null)
-						. $type
-						. '))'
-						. ($optional !== '' ? '?' : null);
-					$route = str_replace($block, $pattern, $route);
-				}
-			}
-			return "`^$route$`u";
-		}
-	}
+							. ($param !== '' ? "?P<$param>" : null)
+							. $type
+							. '))'
+. ($optional !== '' ? '?' : null);
+$route = str_replace($block, $pattern, $route);
+}
+}
+return "`^$route$`u";
+}
+}

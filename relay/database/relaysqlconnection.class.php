@@ -1,9 +1,13 @@
 <?php
+	namespace RelayRegister\Database;
+	use RelayRegister\Utils\Response;
+	use RelayRegister\Utils\Utils;
+	use RelayRegister\Conf\Config;
 	/**
 	 * Handles DB Connection and queries
 	 *
 	 * @author Simon Skrodal
-	 * @since  July 2016
+	 * @since  August 2015
 	 */
 
 	ini_set('mssql.charset', 'UTF-8');
@@ -12,9 +16,9 @@
 
 		private $connection, $config;
 
-		function __construct($config) {
+		function __construct() {
 			// Get connection conf
-			$this->config = $config;
+			$this->config = $this->getConfig();
 		}
 
 		/**
@@ -29,27 +33,20 @@
 			$query = mssql_query($sql, $this->connection);
 			// On error
 			if($query === false) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB query failed (SQL): '  . mssql_get_last_message());
+				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB query failed (SQL).');
 			}
-
-
-			// E.g. boolean is returned if no rows (e.g. no resource found or on UPDATE)
-			if($query === true) {
-				$response = $query;
-			} else {
-				// Response
-				$response = array();
-				//
-				// Loop rows and add to response array
-				if(mssql_num_rows($query) > 0) {
-					while($row = mssql_fetch_assoc($query)) {
-						$response[] = $row;
-					}
+			// Response
+			$response = array();
+			//
+			Utils::log("Rows returned: " . mssql_num_rows($query));
+			// Loop rows and add to response array
+			if(mssql_num_rows($query) > 0) {
+				while($row = mssql_fetch_assoc($query)) {
+					$response[] = $row;
 				}
-				// Free the query result
-				mssql_free_result($query);
 			}
-
+			// Free the query result
+			mssql_free_result($query);
 			// Close link
 			$this->closeConnection();
 			//
@@ -69,7 +66,7 @@
 		 */
 		private function getConnection() {
 			//
-			$connection = mssql_connect($this->config['host'], $this->config['user_write'], $this->config['pass']);
+			$connection = mssql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
 			//
 			if(!$connection) {
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB connection failed (SQL).');
@@ -78,6 +75,8 @@
 			if(!mssql_select_db($this->config['db'])) {
 				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB table connection failed (SQL).');
 			}
+
+			Utils::log("DB CONNECTED");
 			return $connection;
 		}
 
@@ -88,5 +87,14 @@
 			if($this->connection !== false) {
 				mssql_close($this->connection);
 			}
+			Utils::log("DB CLOSED");
+		}
+
+		private function getConfig(){
+			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
+			// Sanity
+			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: SQL Config.'); }
+			// Connect username and pass
+			return json_decode($this->config, true);
 		}
 	}
