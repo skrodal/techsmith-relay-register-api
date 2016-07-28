@@ -91,9 +91,20 @@
 				FROM tblUser
 				WHERE userName = '$username'");
 
-			return $this->getUserId();
-
 			return empty($sqlUserInfoResponse) ? false : $sqlUserInfoResponse[0];
+		}
+
+		/**
+		 * GET /me/id/
+		 *
+		 * @return string
+		 * @internal param $userName
+		 */
+		public function getUserId()
+		{
+			$username = $this->dataporten->getUserName();
+			$sqlUserIdResponse = $this->relaySQL->query("SELECT userId FROM tblUser WHERE userName LIKE '$username'");
+			return empty($sqlUserIdResponse) ? false : $sqlUserIdResponse[0];
 		}
 
 
@@ -104,23 +115,6 @@
 		# Helpers
 		######
 
-
-		/**
-		 * Retrieves ID pertaining to a user name.
-		 *
-		 * @return string
-		 * @internal param $userName
-		 */
-		private function getUserId()
-		{
-			$username = $this->dataporten->getUserName();
-			// 1. QUERY
-			$SQL = "SELECT userId FROM tblUser WHERE userName LIKE '$username'";
-			// 2. EXECUTE
-			$result = $this->relaySQL->query($SQL);
-			// 4. RETURN VALUE
-			return $returnedUserId;
-		}
 
 		/**
 		 * Generate a random (enough) salt.

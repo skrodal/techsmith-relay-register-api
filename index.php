@@ -83,9 +83,17 @@
 	 * GET User account info (name, email, username)
 	 */
 	$router->map('GET', '/me/', function () {
-		global $relay, $dataporten;
+		global $relay;
 		Response::result($relay->getUserInfo());
 	}, 'User account info (false if no account)');
+
+	/**
+	 * GET User account ID
+	 */
+	$router->map('GET', '/me/id/', function () {
+		global $relay;
+		Response::result($relay->getUserId());
+	}, 'User account ID (false if no account)');
 
 	/**
 	 * GET Template
