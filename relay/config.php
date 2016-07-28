@@ -17,7 +17,7 @@
 		[
 			'altoRouter' => [
 				// Remember to update .htacces as well:
-				'api_base_path' => '/api/techsmith-relay'
+				'api_base_path' => '/api/techsmith-relay-register'
 			],
 			'auth'       => [
 				'dataporten'        => $configRoot . 'dataporten_config.js',

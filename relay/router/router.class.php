@@ -51,6 +51,14 @@
 					Response::result(true, $this->altoRouter->getRoutes());
 				}, 'All available routes.'),
 
+				array('GET', '/testmode/', function () {
+					Response::result(true, "RETURN TEST MODE");
+				}, 'Testmode on/off.'),
+
+				array('GET', '/kind/test/', function () {
+					Response::result(true, "TEST KIND");
+				}, 'Test kind.'),
+
 				array('GET', '/version/', function () {
 					Response::result(true, $this->relay->getServiceVersion());
 				}, 'TechSmith Relay version.'),
