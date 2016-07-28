@@ -1,7 +1,7 @@
 <?php
-	namespace RelayRegister\Utils;
+	namespace Relay\Utils;
 
-	use RelayRegister\Conf\Config;
+	use Relay\Conf\Config;
 
 	/**
 	 * @author Simon Skrødal

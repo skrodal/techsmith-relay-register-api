@@ -1,6 +1,6 @@
 <?php
 
-	use RelayRegister\Conf\Config;
+	use Relay\Conf\Config;
 
 	// Writes to development DB if true!!
 	$devMode = true;

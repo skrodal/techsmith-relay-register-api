@@ -1,9 +1,9 @@
 <?php
 
-	namespace RelayRegister\Auth;
+	namespace Relay\Auth;
 
-	use RelayRegister\Conf\Config;
-	use RelayRegister\Utils\Response;
+	use Relay\Conf\Config;
+	use Relay\Utils\Response;
 
 	class Dataporten {
 

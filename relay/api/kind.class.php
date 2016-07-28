@@ -1,8 +1,8 @@
 <?php
 
-	namespace RelayRegister\Api;
+	namespace Relay\Api;
 
-	use RelayRegister\Auth\DataportenClient;
+	use Relay\Auth\DataportenClient;
 
 	class Kind {
 		private $dataportenClient;

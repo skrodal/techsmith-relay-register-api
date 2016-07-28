@@ -3,10 +3,10 @@
 	 * Provides responses for all routes.
 	 */
 
-	namespace RelayRegister\Api;
+	namespace Relay\Api;
 
-	use RelayRegister\Auth\Dataporten;
-	use RelayRegister\Database\RelaySQLConnection;
+	use Relay\Auth\Dataporten;
+	use Relay\Database\RelaySQLConnection;
 
 
 	class Relay {

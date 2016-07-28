@@ -1,5 +1,5 @@
 <?php
-	namespace RelayRegister\Utils;
+	namespace Relay\Utils;
    /**
 	*
 	* @author Simon Skrødal

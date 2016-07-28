@@ -1,6 +1,6 @@
 <?php
 
-	namespace RelayRegister\Conf;
+	namespace Relay\Conf;
 
 	class Config {
 		protected static $config = array();

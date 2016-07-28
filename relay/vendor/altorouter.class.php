@@ -1,5 +1,5 @@
 <?php
-	namespace RelayRegister\Vendor;
+	namespace Relay\Vendor;
 	/**
 	 * Class AltoRouter
 	 *

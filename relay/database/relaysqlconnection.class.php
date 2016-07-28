@@ -1,14 +1,9 @@
 <?php
-	namespace RelayRegister\Database;
-	use RelayRegister\Utils\Response;
-	use RelayRegister\Utils\Utils;
-	use RelayRegister\Conf\Config;
-	/**
-	 * Handles DB Connection and queries
-	 *
-	 * @author Simon Skrodal
-	 * @since  August 2015
-	 */
+	namespace Relay\Database;
+
+	use Relay\Conf\Config;
+	use Relay\Utils\Response;
+	use Relay\Utils\Utils;
 
 	ini_set('mssql.charset', 'UTF-8');
 
@@ -19,6 +14,17 @@
 		function __construct() {
 			// Get connection conf
 			$this->config = $this->getConfig();
+		}
+
+		private function getConfig() {
+			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
+			// Sanity
+			if($this->config === false) {
+				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: SQL Config.');
+			}
+
+			// Connect username and pass
+			return json_decode($this->config, true);
 		}
 
 		/**
@@ -49,16 +55,9 @@
 			mssql_free_result($query);
 			// Close link
 			$this->closeConnection();
+
 			//
 			return $response;
-		}
-
-		public function employeeProfileId() {
-			return (int)$this->config['employeeProfileId'];
-		}
-
-		public function studentProfileId() {
-			return (int)$this->config['studentProfileId'];
 		}
 
 		/**
@@ -77,6 +76,7 @@
 			}
 
 			Utils::log("DB CONNECTED");
+
 			return $connection;
 		}
 
@@ -90,11 +90,11 @@
 			Utils::log("DB CLOSED");
 		}
 
-		private function getConfig(){
-			$this->config = file_get_contents(Config::get('auth')['relay_sql']);
-			// Sanity
-			if($this->config === false) { Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Not Found: SQL Config.'); }
-			// Connect username and pass
-			return json_decode($this->config, true);
+		public function employeeProfileId() {
+			return (int)$this->config['employeeProfileId'];
+		}
+
+		public function studentProfileId() {
+			return (int)$this->config['studentProfileId'];
 		}
 	}

@@ -5,13 +5,13 @@
 	 * @author Simon Skrødal
 	 * @since  July 2016
 	 */
-	namespace RelayRegister;
+	namespace Relay;
 
 	###	   LOAD DEPENDENCIES	###
 	require_once('relay/autoload.php');
 
-	use RelayRegister\Router\Router;
-	use RelayRegister\Utils\Utils;
+	use Relay\Router\Router;
+	use Relay\Utils\Utils;
 
 	// GET/POST
 	Utils::sanitizeInput();

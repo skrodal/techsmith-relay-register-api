@@ -6,15 +6,15 @@
 	 * @since  July 2016
 	 */
 
-	namespace RelayRegister\Router;
+	namespace Relay\Router;
 
-	use RelayRegister\Api\Kind;
-	use RelayRegister\Api\Relay;
-	use RelayRegister\Auth\Dataporten;
-	use RelayRegister\Auth\DataportenClient;
-	use RelayRegister\Conf\Config;
-	use RelayRegister\Utils\Response;
-	use RelayRegister\Vendor\AltoRouter;
+	use Relay\Api\Kind;
+	use Relay\Api\Relay;
+	use Relay\Auth\Dataporten;
+	use Relay\Auth\DataportenClient;
+	use Relay\Conf\Config;
+	use Relay\Utils\Response;
+	use Relay\Vendor\AltoRouter;
 
 
 	class Router {
@@ -60,14 +60,6 @@
 			]);
 		}
 
-		private function declarePostRoutes() {
-			$this->altoRouter->addRoutes([
-				array('GET', '/me/create/', function () {
-					Response::result(true, $this->relay->getUser());
-				}, 'List all orgs (Scope: admin).'),
-			]);
-		}
-
 		private function declareDevRoutes() {
 			if($this->dataporten->isSuperAdmin()) {
 				$this->altoRouterrouter->addRoutes([
@@ -87,5 +79,13 @@
 			} else {
 				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . " The requested resource route could not be found.");
 			}
+		}
+
+		private function declarePostRoutes() {
+			$this->altoRouter->addRoutes([
+				array('GET', '/me/create/', function () {
+					Response::result(true, $this->relay->getUser());
+				}, 'List all orgs (Scope: admin).'),
+			]);
 		}
 	}

@@ -1,11 +1,11 @@
 <?php
 
-	namespace RelayRegister\Auth;
+	namespace Relay\Auth;
 
 	session_start();
 
-	use RelayRegister\Conf\Config;
-	use RelayRegister\Utils\Response;
+	use Relay\Conf\Config;
+	use Relay\Utils\Response;
 
 	/**
 	 * Dataporten OAuth Client Credentials Grant
@@ -37,12 +37,6 @@
 
 		//
 
-		protected function isAuthenticated() {
-			return $this->token !== NULL;
-		}
-
-		// Make a call to the token endpoint with client credentials
-
 		public function get($url) {
 			// Gets/ (or sets) a token
 			$this->checkTokenValidity();
@@ -50,7 +44,7 @@
 			return $this->protectedRequest($url);
 		}
 
-		//
+		// Make a call to the token endpoint with client credentials
 
 		/**
 		 * Ensures that a token exists for this sessionb and that it is valid (not expired) - create new if any issues.
@@ -74,6 +68,8 @@
 			// Token is still ok
 			$this->token = $_SESSION['token'];
 		}
+
+		//
 
 		protected function getToken() {
 			// Sanity check
@@ -108,8 +104,6 @@
 			$this->setToken($data['access_token'], $data['expires_in']);
 		}
 
-		// Make an API call
-
 		protected function setToken($token, $token_expiry) {
 			$this->token                  = $token;
 			$_SESSION['token']            = $token;
@@ -117,7 +111,7 @@
 			$_SESSION['token_expires_in'] = $token_expiry;
 		}
 
-		// Process the API call request
+		// Make an API call
 
 		protected function protectedRequest($url) {
 			if($this->token === NULL) {
@@ -140,6 +134,12 @@
 			}
 
 			return $data;
+		}
+
+		// Process the API call request
+
+		protected function isAuthenticated() {
+			return $this->token !== NULL;
 		}
 
 	}
