@@ -17,7 +17,6 @@
 		// Loads external config files
 		public static function getConfigFromFile($file) {
 			$config = file_get_contents($file);
-			error_log($config);
 			// Sanity
 			if($config === false) {
 				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Config not found: ' . basename($file));

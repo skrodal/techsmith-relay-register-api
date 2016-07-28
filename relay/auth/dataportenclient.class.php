@@ -27,9 +27,8 @@
 
 			$this->config = Config::getConfigFromFile(Config::get('auth')['dataporten_client']);
 
-			error_log(json_encode($this->config));
 
-			//error_log($this->config->dp_auth['client_id']);
+			error_log($this->config->dp_auth->client_id);
 			//error_log($this->config->api_endpoints['kind']);
 			//error_log($this->config['api_endpoints']['kind']);
 		}
