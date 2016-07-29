@@ -89,9 +89,9 @@
 				}
 				// So far, so good. Let's create the account
 				$userAccount                    = [];
-				$userAccount['userName']        = $this->dataporten->getUserName();
-				$userAccount['userDisplayName'] = $this->dataporten->getUserDisplayName();
-				$userAccount['userEmail']       = $this->dataporten->getUserEmail();
+				$userAccount['userName']        = $this->dataporten->userName();
+				$userAccount['userDisplayName'] = $this->dataporten->userDisplayName();
+				$userAccount['userEmail']       = $this->dataporten->userEmail();
 				$userAccount['userPassword']    = $this->generatePassword(10);
 				// FOR INITIAL TESTING ONLY
 				$userAccount['user_id']     = $this->getUserId();
