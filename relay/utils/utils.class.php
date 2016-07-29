@@ -17,11 +17,11 @@
 			}
 		}
 
-		public static function getPresentationRequestBody(){
+		public static function getRequestBody($value){
 			$requestBody = json_decode(file_get_contents('php://input'), true);
 			// No presentation content in the request body
-			if(!$requestBody['presentation'] || empty($requestBody['presentation'])) {
-				Response::error(400, "400 No Content.");
+			if(!$requestBody[$value] || empty($requestBody[$value])) {
+				Response::error(403, "Required data is missing from the request body: " . $value);
 			}
 			return $requestBody;
 		}

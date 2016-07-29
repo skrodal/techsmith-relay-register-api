@@ -9,6 +9,7 @@
 	use Relay\Conf\Config;
 	use Relay\Database\RelaySQLConnection;
 	use Relay\Utils\Response;
+	use Relay\Utils\Utils;
 
 	class Relay {
 		private $relaySQLConnection, $dataporten, $config;
@@ -70,7 +71,8 @@
 		}
 
 		public function createRelayUser() {
-			$affiliation = $_POST['userAffiliation'];
+			// $affiliation = $_POST['userAffiliation'];
+			$affiliation = Utils::getRequestBody('userAffiliation');
 
 			// Only create if user does not already exist
 			if($this->getUserId()) {
@@ -84,7 +86,7 @@
 						$profileID = $this->relaySQL->employeeProfileId();
 						break;
 					default:
-						Response::error(403, "Invalid affiliation: " . $affiliation);
+						Response::error(403, "Affiliation is invalid/missing: " . $affiliation);
 				}
 				// So far, so good. Let's create the account
 
