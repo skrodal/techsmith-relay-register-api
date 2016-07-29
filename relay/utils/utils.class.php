@@ -23,7 +23,7 @@
 			if(!$requestBody[$value] || empty($requestBody[$value])) {
 				Response::error(403, "Required data is missing from the request body: " . $value);
 			}
-			return $requestBody;
+			return $requestBody[$value];
 		}
 
 		/**
