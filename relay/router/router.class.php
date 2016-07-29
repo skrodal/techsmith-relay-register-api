@@ -62,7 +62,7 @@
 				}, 'Testmode on/off.'),
 
 				array('GET', '/kind/test/', function () {
-					$this->kind->callAPI('service/' . $this->relay->kindId() . '/subscribers/');
+					Response::result(true, $this->kind->callAPI('service/' . $this->relay->kindId() . '/subscribers/'));
 				}, 'Test kind.'),
 
 				array('GET', '/version/', function () {
