@@ -7,31 +7,33 @@
 
 	class Dataporten {
 
-		private $config, $userInfo;
+		private $config, $userInfo, $userGroups;
 
 		function __construct() {
 			// Exits on OPTION call
-			$this->_checkCORS();
+			$this->checkCORS();
 			// Dataporten username and pass (will exit on fail)
 			$this->config = Config::getConfigFromFile(Config::get('auth')['dataporten']);
 			// Exits on incorrect credentials
-			$this->_checkGateKeeperCredentials();
+			$this->checkGateKeeperCredentials();
 			// Will exit if client does not have required scope
-			if(!$this->_hasDataportenScope('admin')) {
+			if(!$this->hasDataportenScope('admin')) {
 				Response::error(403, $_SERVER["SERVER_PROTOCOL"] . ' Client does not have required scope to access this API.');
 			};
-			// Data returned from /userinfo/ endpoint
-			$this->userInfo = $this->_getUserInfo();
+			// Endpoint /userinfo/
+			$this->userInfo = $this->getUserInfo();
+			// Endpoint /groups/me/groups/
+			$this->userGroups = $this->getUserGroups();
 		}
 
-		private function _checkCORS() {
+		private function checkCORS() {
 			// Access-Control headers are received during OPTIONS requests
 			if(strcasecmp($_SERVER['REQUEST_METHOD'], "OPTIONS") === 0) {
 				Response::result('CORS OK :-)');
 			}
 		}
 
-		private function _checkGateKeeperCredentials() {
+		private function checkGateKeeperCredentials() {
 			if(empty($_SERVER["PHP_AUTH_USER"]) || empty($_SERVER["PHP_AUTH_PW"])) {
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (Missing API Gatekeeper Credentials)');
 			}
@@ -45,7 +47,7 @@
 			}
 		}
 
-		private function _hasDataportenScope($scope) {
+		private function hasDataportenScope($scope) {
 			// Get the scope(s)
 			$scopes = $_SERVER["HTTP_X_DATAPORTEN_SCOPES"];
 			// Make array
@@ -56,9 +58,13 @@
 		}
 
 		// Call /userinfo/ for name/email of user
-		private function _getUserInfo() {
+		private function getUserInfo() {
+			return $this->protectedRequest('https://auth.dataporten.no/userinfo/')['user'];
+		}
+
+		private function protectedRequest($url) {
 			$token = $_SERVER['HTTP_X_DATAPORTEN_TOKEN'];
-			if(!$token) {
+			if(empty($token)) {
 				Response::error(403, "Missing token: Cannot get userinfo.");
 			}
 
@@ -69,17 +75,24 @@
 				),
 			);
 			$context = stream_context_create($opts);
-			$result  = file_get_contents('https://auth.dataporten.no/userinfo/', false, $context);
+			$result  = file_get_contents($url, false, $context);
 
 
 			$data = json_decode($result, true);
-			if($data === NULL) {
+			if(empty($data)) {
 				Response::error(204, "No content. The API provided no response ($http_response_header[0])");
 			}
 
-			return $data['user'];
+			return $data;
 		}
 
+		private function getUserGroups() {
+			return $this->protectedRequest('https://groups-api.dataporten.no/groups/me/groups/');
+		}
+
+		public function userAffiliation() {
+			return $this->userGroups;
+		}
 
 		public function userDisplayName() {
 			return $this->userInfo['name'];
@@ -100,10 +113,10 @@
 		}
 
 		public function userName() {
-			return $this->_getFeideUsername();
+			return $this->getFeideUsername();
 		}
 
-		private function _getFeideUsername() {
+		private function getFeideUsername() {
 			if(!isset($_SERVER["HTTP_X_DATAPORTEN_USERID_SEC"])) {
 				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (user not found)');
 			}

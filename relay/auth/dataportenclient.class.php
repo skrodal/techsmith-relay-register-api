@@ -94,7 +94,7 @@
 			$result  = file_get_contents($this->ep_token, false, $context);
 			$data    = json_decode($result, true);
 
-			if($data === NULL) {
+			if(empty($data)) {
 				Response::error(500, "Could not parse JSON  output from Token endpoint. Debug response from the OAuth provider: " . json_encode($result));
 			}
 			// echo '<pre>' . json_encode($data) . '</pre>';
@@ -112,7 +112,7 @@
 		// Make an API call
 
 		protected function protectedRequest($url) {
-			if($this->token === NULL) {
+			if(empty($this->token)) {
 				Response::error(403, "Missing token: Request cannot be made.");
 			}
 
@@ -125,9 +125,8 @@
 			$context = stream_context_create($opts);
 			$result  = file_get_contents($url, false, $context);
 
-
 			$data = json_decode($result, true);
-			if($data === NULL) {
+			if(empty($data)) {
 				Response::error(204, "No content. The API provided no response ($http_response_header[0])");
 			}
 
@@ -137,7 +136,7 @@
 		// Process the API call request
 
 		protected function isAuthenticated() {
-			return $this->token !== NULL;
+			return !empty($this->token);
 		}
 
 	}

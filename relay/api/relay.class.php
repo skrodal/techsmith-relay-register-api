@@ -95,7 +95,7 @@
 				$userAccount['userPassword']    = $this->generatePassword(10);
 				// FOR INITIAL TESTING ONLY
 				$userAccount['userId']      = $this->getUserId();
-				$userAccount['affiliation'] = $affiliation;
+				$userAccount['affiliation'] = $this->dataporten->userAffiliation();
 				$userAccount['profileId']   = $profileID;
 				//
 				$userAccount['passwordSalt']   = $this->generateSalt();
