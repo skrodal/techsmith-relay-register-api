@@ -69,8 +69,8 @@
 
 		private function declarePostRoutes() {
 			$this->altoRouter->addRoutes([
-				array('GET', '/relay/me/create/', function () {
-					Response::result(true, $this->relay->getRelayUser());
+				array('POST', '/relay/me/create/', function () {
+					Response::result(true, $this->relay->createRelayUser());
 				}, 'Create user account.'),
 			]);
 		}

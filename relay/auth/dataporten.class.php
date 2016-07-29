@@ -16,7 +16,7 @@
 			$this->config = Config::getConfigFromFile(Config::get('auth')['dataporten']);
 			// Exits on incorrect credentials
 			$this->_checkGateKeeperCredentials();
-			//
+			// Will exit if client does not have required scope
 			if(!$this->_hasDataportenScope('admin')) {
 				Response::error(403, $_SERVER["SERVER_PROTOCOL"] . ' Client does not have required scope to access this API.');
 			};
