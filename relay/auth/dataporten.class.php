@@ -7,7 +7,7 @@
 
 	class Dataporten {
 
-		private $config;
+		private $config, $userInfo;
 
 		function __construct() {
 			// Exits on OPTION call
@@ -20,6 +20,7 @@
 			if(!$this->_hasDataportenScope('admin')) {
 				Response::error(403, $_SERVER["SERVER_PROTOCOL"] . ' Client does not have required scope to access this API.');
 			};
+			$this->userInfo = $this->_getUserInfo();
 		}
 
 		private function _checkCORS() {
@@ -51,6 +52,34 @@
 
 			// True/false
 			return in_array($scope, $scopes);
+		}
+
+		private function _getUserInfo() {
+			$token = $_SERVER['HTTP_X_DATAPORTEN_TOKEN'];
+			if(!$token) {
+				Response::error(403, "Missing token: Cannot get userinfo.");
+			}
+
+			$opts    = array(
+				'http' => array(
+					'method' => 'GET',
+					'header' => "Authorization: Bearer " . $token,
+				),
+			);
+			$context = stream_context_create($opts);
+			$result  = file_get_contents('https://auth.dataporten.no/userinfo/', false, $context);
+
+
+			$data = json_decode($result, true);
+			if($data === NULL) {
+				Response::error(204, "No content. The API provided no response ($http_response_header[0])");
+			}
+
+			return $data;
+		}
+
+		public function getUserInfo() {
+			return $this->userInfo;
 		}
 
 		public function userDisplayName() {

@@ -66,7 +66,7 @@
 				}, 'User account details..'),
 
 				array('GET', '/dataporten/userinfo/', function () {
-					Response::result($this->dataportenClient->get('https://auth.dataporten.no/userinfo/'));
+					Response::result($this->dataporten->getUserInfo());
 				}, 'Dataporten /userinfo/'),
 
 

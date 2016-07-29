@@ -113,7 +113,7 @@
 
 		protected function protectedRequest($url) {
 			if($this->token === NULL) {
-				throw new Exception('Cannot get data without a token');
+				Response::error(403, "Missing token: Request cannot be made.");
 			}
 
 			$opts    = array(
@@ -128,7 +128,7 @@
 
 			$data = json_decode($result, true);
 			if($data === NULL) {
-				$data = array('status' => 'false', 'message' => 'Sorry, the API provided no response (' . $http_response_header[0] . ')');
+				Response::error(204, "No content. The API provided no response ($http_response_header[0])");
 			}
 
 			return $data;
