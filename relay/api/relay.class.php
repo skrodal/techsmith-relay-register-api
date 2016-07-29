@@ -30,45 +30,6 @@
 		}
 
 		/**
-		 * /me/
-		 */
-		public function getRelayUser() {
-			$sqlResponse = $this->relaySQLConnection->query("
-				SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
-				FROM tblUser, tblUserProfile
-				WHERE tblUser.userId = tblUserProfile.usprUser_userId
-				AND userName = '" . $this->dataporten->userName() . "'");
-
-			// Convert affiliation code to text
-			// Some test users have more than one profile, thus the SQL query may return more than one entry for a single user.
-			// Since we're after a specific profile - either employeeProfileId or studentProfileId - run this check and return entry
-			// as soon as we have a match.
-			if(!empty($sqlResponse)) {
-				foreach($sqlResponse as $key => $info) {
-					switch($sqlResponse[$key]['userAffiliation']) {
-						case $this->employeeProfileId():
-							$sqlResponse[$key]['userAffiliation'] = 'employee';
-							return $sqlResponse[$key];
-						case $this->studentProfileId():
-							$sqlResponse[$key]['userAffiliation'] = 'student';
-							return $sqlResponse[$key];
-					}
-				}
-			} else {
-				return false;
-			}
-		}
-
-
-		public function employeeProfileId() {
-			return (int)$this->config['employeeProfileId'];
-		}
-
-		public function studentProfileId() {
-			return (int)$this->config['studentProfileId'];
-		}
-
-		/**
 		 * /me/create/
 		 */
 		public function createRelayUser() {
@@ -77,10 +38,9 @@
 				// Will exit if student/employee is missing
 				$profileID = $this->getRelayProfileIdFromAffiliation();
 
-				// Details that will be returned to the client (user); some from Relay DB, some from Dataporten.
+				// Details that will be returned to the client (user):
 				$newAccount                = [];
 				$newAccount['password']    = $this->generatePassword(10);
-				$newAccount['affiliation'] = $this->dataporten->userAffiliation();
 				//
 				// Details that will be added to the account
 				$accountInsert                    = [];
@@ -128,10 +88,20 @@
                 ";
 
 				// CHECK ABOVE FIRST!
-				$result = $this->relaySQLConnection->query($SQL);
+				$result = $this->relaySQLConnection->query($SQL); // Run the insert
+				// TODO:
+				// After insert verified:
 
+				// Now call the database and request info for the account we just made
+				$userAccount                   = $this->getRelayUser();
+				// ...and supplement the account details we're about to send back to the client
+				$newAccount['userId']          = $userAccount['userId'];
+				$newAccount['userName']        = $userAccount['userName'];
+				$newAccount['userDisplayName'] = $userAccount['userDisplayName'];
+				$newAccount['userEmail']       = $userAccount['userEmail'];
+				$newAccount['userAffiliation'] = $userAccount['userAffiliation'];
 
-				return $result;
+				return $newAccount;
 			} else {
 				// User exists already
 				Response::error(403, "Account already exists!");
@@ -164,17 +134,25 @@
 			}
 		}
 
+		public function studentProfileId() {
+			return (int)$this->config['studentProfileId'];
+		}
+
+		public function employeeProfileId() {
+			return (int)$this->config['employeeProfileId'];
+		}
+
 		private function generatePassword($length) {
 			$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 			return substr(str_shuffle($chars), 0, $length);
 		}
 
-		// SHA384
-
 		private function generateSalt() {
 			return md5(uniqid(mt_rand(), true));
 		}
+
+		// SHA384
 
 		private function hashPassword($password, $salt) {
 			$hashedPassword         = hash('sha384', $password . $salt);
@@ -184,6 +162,38 @@
 			}
 
 			return $hashedPassword;
+		}
+
+		/**
+		 * /me/
+		 */
+		public function getRelayUser() {
+			$sqlResponse = $this->relaySQLConnection->query("
+				SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
+				FROM tblUser, tblUserProfile
+				WHERE tblUser.userId = tblUserProfile.usprUser_userId
+				AND userName = '" . $this->dataporten->userName() . "'");
+
+			// Convert affiliation code to text
+			// Some test users have more than one profile, thus the SQL query may return more than one entry for a single user.
+			// Since we're after a specific profile - either employeeProfileId or studentProfileId - run this check and return entry
+			// as soon as we have a match.
+			if(!empty($sqlResponse)) {
+				foreach($sqlResponse as $key => $info) {
+					switch($sqlResponse[$key]['userAffiliation']) {
+						case $this->employeeProfileId():
+							$sqlResponse[$key]['userAffiliation'] = 'employee';
+
+							return $sqlResponse[$key];
+						case $this->studentProfileId():
+							$sqlResponse[$key]['userAffiliation'] = 'student';
+
+							return $sqlResponse[$key];
+					}
+				}
+			} else {
+				return false;
+			}
 		}
 
 		public function kindId() {
