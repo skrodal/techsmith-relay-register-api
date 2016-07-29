@@ -20,6 +20,7 @@
 			if(!$this->_hasDataportenScope('admin')) {
 				Response::error(403, $_SERVER["SERVER_PROTOCOL"] . ' Client does not have required scope to access this API.');
 			};
+			// Data returned from /userinfo/ endpoint
 			$this->userInfo = $this->_getUserInfo();
 		}
 
@@ -54,6 +55,7 @@
 			return in_array($scope, $scopes);
 		}
 
+		// Call /userinfo/ for name/email of user
 		private function _getUserInfo() {
 			$token = $_SERVER['HTTP_X_DATAPORTEN_TOKEN'];
 			if(!$token) {
@@ -75,21 +77,16 @@
 				Response::error(204, "No content. The API provided no response ($http_response_header[0])");
 			}
 
-			return $data;
+			return $data['user'];
 		}
 
-		public function getUserInfo() {
-			return $this->userInfo;
-		}
 
 		public function userDisplayName() {
-			// TODO!
-			return NULL;
+			return $this->userInfo['name'];
 		}
 
 		public function userEmail() {
-			// TODO!
-			return NULL;
+			return $this->userInfo['email'];
 		}
 
 		public function isSuperAdmin() {
