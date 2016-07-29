@@ -24,16 +24,15 @@
 		#
 		# /service/*/
 		#
-		// /service/ endpoint - not sure if needed...
-		public function getServiceVersion() {
-			$version = $this->relaySQLConnection->query("SELECT versValue FROM tblVersion")[0];
-			return $version['versValue'];
+		public function getRelayVersion() {
+			$sqlResponse = $this->relaySQLConnection->query("SELECT versValue FROM tblVersion")[0];
+
+			return $sqlResponse['versValue'];
 		}
 
-
 		// /me/
-		public function getUser() {
-			$query = $this->relaySQLConnection->query("
+		public function getRelayUser() {
+			$sqlResponse = $this->relaySQLConnection->query("
 				SELECT userId, userName, userDisplayName, userEmail, usprProfile_profId AS userAffiliation
 				FROM tblUser, tblUserProfile
 				WHERE tblUser.userId = tblUserProfile.usprUser_userId
@@ -43,21 +42,102 @@
 			// Some test users have more than one profile, thus the SQL query may return more than one entry for a single user.
 			// Since we're after a specific profile - either employeeProfileId or studentProfileId - run this check and return entry
 			// as soon as we have a match.
-			if(!empty($query)) {
-				foreach($query as $key => $info) {
-					switch($query[$key]['userAffiliation']) {
+			if(!empty($sqlResponse)) {
+				foreach($sqlResponse as $key => $info) {
+					switch($sqlResponse[$key]['userAffiliation']) {
 						case $this->employeeProfileId():
-							$query[$key]['userAffiliation'] = 'employee';
+							$sqlResponse[$key]['userAffiliation'] = 'employee';
 
-							return $query[$key];
+							return $sqlResponse[$key];
 						case $this->studentProfileId():
-							$query[$key]['userAffiliation'] = 'student';
+							$sqlResponse[$key]['userAffiliation'] = 'student';
 
-							return $query[$key];
+							return $sqlResponse[$key];
 					}
 				}
 			} else {
 				return false;
+			}
+		}
+
+		public function createRelayUser() {
+			$affiliation = $_POST['userAffiliation'];
+
+			// Only create if user does not already exist
+			if(!$this->getUserId()) {
+				$profileID = NULL;
+				// Match affiliation with a Profile ID in Relay
+				switch(trim(strtolower($affiliation))) {
+					case 'student':
+						$profileID = $this->relaySQL->studentProfileId();
+						break;
+					case 'employee':
+						$profileID = $this->relaySQL->employeeProfileId();
+						break;
+					default:
+						Response::error(403, "Invalid affiliation: " . $affiliation);
+				}
+				// So far, so good. Let's create the account
+
+				$userAccount                    = [];
+				$userAccount['userName']        = $this->dataporten->getUserName();
+				$userAccount['userDisplayName'] = $this->dataporten->getUserDisplayName();
+				$userAccount['userEmail']       = $this->dataporten->getUserEmail();
+				$userAccount['userPassword']    = $this->generatePassword(10);
+				// FOR INITIAL TESTING ONLY
+				$userAccount['user_id']     = $this->getUserId();
+				$userAccount['affiliation'] = $affiliation;
+				$userAccount['profile_id']  = $profileID;
+				//
+				$userAccount['passwordSalt']   = $this->generateSalt();
+				$userAccount['passwordHashed'] = $this->hashPassword($userAccount['userPassword'], $userAccount['passwordSalt']);;
+
+
+				// TODO = CHECK BEFORE TESTING!
+				$SQL = "
+                    INSERT INTO tblUser (
+                    userName, userDisplayName, userPassword, userEmail, userAccountType, 
+                    userTechSmithId, userAnonymous, userMaster, userLocked, userLockedAtTime, 
+                    userGetsAdminEmail, userLdapName, userPasswordHashAlgo, userPasswordSalt, 
+                    createdOn, createdByUser, modifiedOn, modifiedByUser, modifiedByModule, modificationCount)
+
+                    SELECT 
+                    '" . $userAccount['userName'] . "', 
+                    '" . $userAccount['userDisplayName'] . "', 
+                    '" . $userAccount['passwordHashed'] ."', 
+                    '" . $userAccount['userEmail'] ."',  
+                    userAccountType, userTechSmithId, userAnonymous, userMaster, userLocked, 
+                    userLockedAtTime, userGetsAdminEmail, userLdapName, userPasswordHashAlgo, 
+                    '" . $userAccount['passwordSalt'] . "', 
+                    createdOn, createdByUser, modifiedOn, modifiedByUser, modifiedByModule, modificationCount
+                    FROM tblUser
+                    WHERE userName = 'FEIDE_USERNAME'
+                ";
+
+				$SQL = "SELECT 
+                    '" . $userAccount['userName'] . "', 
+                    '" . $userAccount['userDisplayName'] . "', 
+                    '" . $userAccount['passwordHashed'] . "', 
+                    '" . $userAccount['userEmail'] . "',  
+                    userAccountType, userTechSmithId, userAnonymous, userMaster, userLocked, 
+                    userLockedAtTime, userGetsAdminEmail, userLdapName, userPasswordHashAlgo, 
+                    '" . $userAccount['passwordSalt'] . "', 
+                    createdOn, createdByUser, modifiedOn, modifiedByUser, modifiedByModule, modificationCount
+                    FROM tblUser
+                    WHERE userName = 'FEIDE_USERNAME'
+                ";
+
+				// CHECK ABOVE FIRST!
+				$result = $this->relaySQL->query($SQL);
+
+				$userAccount['headers'] = $_SERVER;
+				$userAccount['post'] = $_POST;
+				$userAccount['sqlresponse'] = $result;
+
+				return $userAccount;
+			} else {
+				// User exists already
+				Response::error(403, "Account already exists!");
 			}
 		}
 
@@ -73,4 +153,34 @@
 			return $this->config['kindId'];
 		}
 
+		private function getUserId() {
+			$sqlResponse = $this->relaySQLConnection->query("
+				SELECT userId 
+				FROM tblUser 
+				WHERE userName LIKE '" . $this->dataporten->userName() . "'"
+			);
+
+			return empty($sqlResponse) ? false : $sqlResponse[0];
+		}
+
+		private function generatePassword($length) {
+			$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+			return substr(str_shuffle($chars), 0, $length);
+		}
+
+		private function generateSalt() {
+			return md5(uniqid(mt_rand(), true));
+		}
+
+		// SHA384
+		private function hashPassword($password, $salt) {
+			$hashedPassword         = hash('sha384', $password . $salt);
+			$TIMES_TO_HASH_PASSWORD = 2;
+			for($i = 0; $i < $TIMES_TO_HASH_PASSWORD; $i++) {
+				$hashedPassword = hash('sha384', $hashedPassword . $salt);
+			}
+
+			return $hashedPassword;
+		}
 	}

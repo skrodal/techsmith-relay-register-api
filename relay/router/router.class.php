@@ -58,11 +58,11 @@
 				}, 'Test kind.'),
 
 				array('GET', '/relay/version/', function () {
-					Response::result(true, $this->relay->getServiceVersion());
+					Response::result(true, $this->relay->getRelayVersion());
 				}, 'TechSmith Relay version.'),
 
 				array('GET', '/relay/me/', function () {
-					Response::result(true, $this->relay->getUser());
+					Response::result(true, $this->relay->getRelayUser());
 				}, 'User account details..'),
 			]);
 		}
@@ -70,7 +70,7 @@
 		private function declarePostRoutes() {
 			$this->altoRouter->addRoutes([
 				array('GET', '/relay/me/create/', function () {
-					Response::result(true, $this->relay->getUser());
+					Response::result(true, $this->relay->getRelayUser());
 				}, 'Create user account.'),
 			]);
 		}
