@@ -23,28 +23,20 @@
 		private $altoRouter, $relay, $kind, $dataporten, $dataportenClient;
 
 		function __construct() {
-			### 	  ALTO ROUTER 		###
+			### ALTO ROUTER
 			$this->altoRouter = new AltoRouter();
 			$this->altoRouter->setBasePath(Config::get('altoRouter')['api_base_path']);
-
-			### 	  DATAPORTEN 		###
-			$this->dataporten = new Dataporten();
+			### DATAPORTEN
+			$this->dataporten       = new Dataporten();
 			$this->dataportenClient = new DataportenClient();
-
-			### 	  RELAY  		    ###
+			### RELAY
 			$this->relay = new Relay($this->dataporten);
-
-			### 	  KIND 		        ###
+			### KIND
 			$this->kind = new Kind($this->dataportenClient);
-
 			// Make all GET routes available
 			$this->declareGetRoutes();
 			// Make all POST routes available
 			$this->declarePostRoutes();
-			// Make all DEV routes available if admin user is logged on
-			if($this->dataporten->isSuperAdmin()) {
-				$this->declareDevRoutes();
-			}
 			// Activate routes
 			$this->matchRoutes();
 
@@ -57,19 +49,19 @@
 					Response::result(true, $this->altoRouter->getRoutes());
 				}, 'All available routes.'),
 
-				array('GET', '/testmode/', function () {
+				array('GET', '/service/testmode/', function () {
 					Response::result(true, Config::get('settings')['dev_mode']);
 				}, 'Testmode on/off.'),
 
-				array('GET', '/kind/test/', function () {
+				array('GET', '/kind/subscribers/', function () {
 					Response::result(true, $this->kind->callAPI('service/' . $this->relay->kindId() . '/subscribers/'));
 				}, 'Test kind.'),
 
-				array('GET', '/version/', function () {
+				array('GET', '/relay/version/', function () {
 					Response::result(true, $this->relay->getServiceVersion());
 				}, 'TechSmith Relay version.'),
 
-				array('GET', '/me/', function () {
+				array('GET', '/relay/me/', function () {
 					Response::result(true, $this->relay->getUser());
 				}, 'User account details..'),
 			]);
@@ -77,21 +69,12 @@
 
 		private function declarePostRoutes() {
 			$this->altoRouter->addRoutes([
-				array('GET', '/me/create/', function () {
+				array('GET', '/relay/me/create/', function () {
 					Response::result(true, $this->relay->getUser());
 				}, 'Create user account.'),
 			]);
 		}
 
-		private function declareDevRoutes() {
-			if($this->dataporten->isSuperAdmin()) {
-				$this->altoRouter->addRoutes([
-					array('GET', '/dev/something/', function () {
-						Response::result(true, "SOMETHING");
-					}, 'Test route.')
-				]);
-			}
-		}
 
 		private function matchRoutes() {
 			$match = $this->altoRouter->match();
