@@ -137,7 +137,7 @@
                 ";
 
 				// CHECK ABOVE FIRST!
-				$result = $this->relaySQL->query($SQL);
+				$result = $this->relaySQLConnection->query($SQL);
 
 				$userAccount['headers']     = $_SERVER;
 				$userAccount['post']        = $_POST;
