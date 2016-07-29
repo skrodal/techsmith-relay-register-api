@@ -72,12 +72,12 @@
 
 		public function createRelayUser() {
 			// $affiliation = $_POST['userAffiliation'];
-			$affiliation = Utils::getRequestBody('userAffiliation');
+			$affiliation = trim(strtolower(Utils::getRequestBody('userAffiliation')));
 			// Only create if user does not already exist
 			if($this->getUserId()) {
 				$profileID = NULL;
 				// Match affiliation with a Profile ID in Relay
-				switch(strtolower(trim($affiliation))) {
+				switch($affiliation) {
 					case 'student':
 						$profileID = $this->studentProfileId();
 						break;
@@ -94,9 +94,9 @@
 				$userAccount['userEmail']       = $this->dataporten->userEmail();
 				$userAccount['userPassword']    = $this->generatePassword(10);
 				// FOR INITIAL TESTING ONLY
-				$userAccount['user_id']     = $this->getUserId();
+				$userAccount['userId']      = $this->getUserId();
 				$userAccount['affiliation'] = $affiliation;
-				$userAccount['profile_id']  = $profileID;
+				$userAccount['profileId']   = $profileID;
 				//
 				$userAccount['passwordSalt']   = $this->generateSalt();
 				$userAccount['passwordHashed'] = $this->hashPassword($userAccount['userPassword'], $userAccount['passwordSalt']);;
@@ -157,7 +157,7 @@
 				WHERE userName LIKE '" . $this->dataporten->userName() . "'"
 			);
 
-			return empty($sqlResponse) ? false : $sqlResponse[0];
+			return empty($sqlResponse) ? false : $sqlResponse[0]['userId'];
 		}
 
 		private function generatePassword($length) {

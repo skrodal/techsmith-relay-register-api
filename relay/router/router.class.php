@@ -64,6 +64,13 @@
 				array('GET', '/relay/me/', function () {
 					Response::result($this->relay->getRelayUser());
 				}, 'User account details..'),
+
+				array('GET', '/dataporten/userinfo/', function () {
+					Response::result($this->dataportenClient->get('https://auth.dataporten.no/userinfo/'));
+				}, 'Dataporten /userinfo/'),
+
+
+
 			]);
 		}
 
