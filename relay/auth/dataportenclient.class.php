@@ -45,7 +45,7 @@
 		// Make a call to the token endpoint with client credentials
 
 		/**
-		 * Ensures that a token exists for this sessionb and that it is valid (not expired) - create new if any issues.
+		 * Ensures that a token exists for this session and that it is valid (not expired) - create new if any issues.
 		 */
 		protected function checkTokenValidity() {
 			// Missing token info
