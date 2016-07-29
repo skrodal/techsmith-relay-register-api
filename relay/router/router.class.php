@@ -58,7 +58,7 @@
 				}, 'All available routes.'),
 
 				array('GET', '/testmode/', function () {
-					Response::result(true, "RETURN TEST MODE");
+					Response::result(true, Config::get('settings')['dev_mode']);
 				}, 'Testmode on/off.'),
 
 				array('GET', '/kind/test/', function () {
