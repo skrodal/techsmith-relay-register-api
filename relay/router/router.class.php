@@ -52,10 +52,6 @@
 					Response::result($this->altoRouter->getRoutes());
 				}, 'All available routes.'),
 
-				array('GET', '/service/testmode/', function () {
-					Response::result(Config::get('settings')['dev_mode']);
-				}, 'Testmode on/off.'),
-
 				array('GET', '/kind/subscribers/', function () {
 					Response::result($this->kind->callAPI('service/' . $this->relay->kindId() . '/subscribers/'));
 				}, 'Test kind.'),
@@ -67,6 +63,10 @@
 				array('GET', '/relay/me/', function () {
 					Response::result($this->relay->getRelayUser());
 				}, 'User account details..'),
+
+				array('GET', '/service/testmode/', function () {
+					Response::result(Config::get('settings')['dev_mode']);
+				}, 'Testmode on/off.'),
 
 			]);
 		}
