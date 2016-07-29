@@ -59,7 +59,7 @@
 
 		// Call /userinfo/ for name/email of user
 		private function getUserInfo() {
-			return $this->protectedRequest('https://auth.dataporten.no/userinfo/')['user'];
+			return $this->protectedRequest('https://auth.dataporten.no/userinfo')['user'];
 		}
 
 		private function protectedRequest($url) {
@@ -87,7 +87,7 @@
 		}
 
 		private function getUserGroups() {
-			return $this->protectedRequest('https://groups-api.dataporten.no/groups/me/groups/');
+			return $this->protectedRequest('https://groups-api.dataporten.no/groups/me/groups');
 		}
 
 		public function userAffiliation() {

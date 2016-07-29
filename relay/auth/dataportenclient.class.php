@@ -69,7 +69,7 @@
 
 		//
 
-		protected function getToken() {
+		private function getToken() {
 			// Sanity check
 			if(empty($this->config['dp_auth']['client_id'])) {
 				Response::error(403, 'Configuration [client_id] is REQUIRED but not set');
@@ -102,7 +102,7 @@
 			$this->setToken($data['access_token'], $data['expires_in']);
 		}
 
-		protected function setToken($token, $token_expiry) {
+		private function setToken($token, $token_expiry) {
 			$this->token                  = $token;
 			$_SESSION['token']            = $token;
 			$_SESSION['token_created']    = time();
@@ -111,7 +111,7 @@
 
 		// Make an API call
 
-		protected function protectedRequest($url) {
+		private function protectedRequest($url) {
 			if(empty($this->token)) {
 				Response::error(403, "Missing token: Request cannot be made.");
 			}
@@ -135,7 +135,7 @@
 
 		// Process the API call request
 
-		protected function isAuthenticated() {
+		private function isAuthenticated() {
 			return !empty($this->token);
 		}
 
