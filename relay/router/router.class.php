@@ -46,23 +46,23 @@
 			$this->altoRouter->addRoutes([
 				// List all routes
 				array('GET', '/', function () {
-					Response::result(true, $this->altoRouter->getRoutes());
+					Response::result($this->altoRouter->getRoutes());
 				}, 'All available routes.'),
 
 				array('GET', '/service/testmode/', function () {
-					Response::result(true, Config::get('settings')['dev_mode']);
+					Response::result(Config::get('settings')['dev_mode']);
 				}, 'Testmode on/off.'),
 
 				array('GET', '/kind/subscribers/', function () {
-					Response::result(true, $this->kind->callAPI('service/' . $this->relay->kindId() . '/subscribers/'));
+					Response::result($this->kind->callAPI('service/' . $this->relay->kindId() . '/subscribers/'));
 				}, 'Test kind.'),
 
 				array('GET', '/relay/version/', function () {
-					Response::result(true, $this->relay->getRelayVersion());
+					Response::result($this->relay->getRelayVersion());
 				}, 'TechSmith Relay version.'),
 
 				array('GET', '/relay/me/', function () {
-					Response::result(true, $this->relay->getRelayUser());
+					Response::result($this->relay->getRelayUser());
 				}, 'User account details..'),
 			]);
 		}
@@ -70,7 +70,7 @@
 		private function declarePostRoutes() {
 			$this->altoRouter->addRoutes([
 				array('POST', '/relay/me/create/', function () {
-					Response::result(true, $this->relay->createRelayUser());
+					Response::result($this->relay->createRelayUser());
 				}, 'Create user account.'),
 			]);
 		}

@@ -8,7 +8,7 @@
 	
 	class Response {
 		
-		public static function result($status, $result) {
+		public static function result($result) {
 			// Ensure no caching occurs on server (correct for HTTP/1.1)
 			header('Cache-Control: no-cache, no-store, must-revalidate');
 			header("Expires: Fri, 10 Oct 1980 04:00:00 GMT"); // Date in the past
@@ -25,7 +25,7 @@
 			// Return response
 			exit( json_encode(
 				array(
-					'status' => $status,
+					'status' => true,
 					'data' => $result
 				)
 			, JSON_UNESCAPED_UNICODE));

@@ -25,7 +25,7 @@
 		private function _checkCORS() {
 			// Access-Control headers are received during OPTIONS requests
 			if(strcasecmp($_SERVER['REQUEST_METHOD'], "OPTIONS") === 0) {
-				Response::result(true, 'CORS OK :-)');
+				Response::result('CORS OK :-)');
 			}
 		}
 

@@ -73,7 +73,7 @@
 			$affiliation = $_POST['userAffiliation'];
 
 			// Only create if user does not already exist
-			if(!$this->getUserId()) {
+			if($this->getUserId()) {
 				$profileID = NULL;
 				// Match affiliation with a Profile ID in Relay
 				switch(trim(strtolower($affiliation))) {
