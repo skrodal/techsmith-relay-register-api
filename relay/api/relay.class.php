@@ -34,7 +34,7 @@
 		 */
 		public function createRelayUser() {
 			// Only create if user does not already exist
-			if($this->getRelayAccountExists()) {
+			if(!$this->getRelayAccountExists()) {
 				// Will exit if student/employee is missing
 				$profileID = $this->getRelayProfileIdFromAffiliation();
 
@@ -89,8 +89,7 @@
 
 				// CHECK ABOVE FIRST!
 				$result = $this->relaySQLConnection->query($SQL); // Run the insert
-				// TODO:
-				// After insert verified:
+
 
 				// Now call the database and request info for the account we just made
 				$userAccount                   = $this->getRelayUser();
