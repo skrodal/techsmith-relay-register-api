@@ -58,8 +58,11 @@
 		}
 
 		// Call /userinfo/ for name/email of user
-		private function getUserInfo() {
+		public function getUserInfo() {
 			return $this->protectedRequest('https://auth.dataporten.no/userinfo')['user'];
+		}
+		public function getUserGroups() {
+			return $this->protectedRequest('https://groups-api.dataporten.no/groups/me/groups?query=fc:org');
 		}
 
 		private function protectedRequest($url) {
@@ -86,12 +89,16 @@
 			return $data;
 		}
 
-		private function getUserGroups() {
-			return $this->protectedRequest('https://groups-api.dataporten.no/groups/me/groups');
-		}
-
 		public function userAffiliation() {
-			return $this->userGroups;
+			$affiliation = null;
+			foreach($this->userGroups as $group){
+				if($group['type'] === 'fc:org') {
+					if(!empty($group['membership']['primaryAffiliation'])){
+						return trim(strtolower($group['membership']['primaryAffiliation']));
+					}
+				}
+			}
+			Response::error(401, "User affiliation was not found.");
 		}
 
 		public function userDisplayName() {

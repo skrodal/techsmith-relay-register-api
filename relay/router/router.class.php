@@ -37,6 +37,9 @@
 			$this->declareGetRoutes();
 			// Make all POST routes available
 			$this->declarePostRoutes();
+			if($this->dataporten->isSuperAdmin()) {
+				$this->declareDevRoutes();
+			}
 			// Activate routes
 			$this->matchRoutes();
 
@@ -65,12 +68,6 @@
 					Response::result($this->relay->getRelayUser());
 				}, 'User account details..'),
 
-				array('GET', '/dataporten/userinfo/', function () {
-					Response::result($this->dataporten->getUserInfo());
-				}, 'Dataporten /userinfo/'),
-
-
-
 			]);
 		}
 
@@ -79,6 +76,21 @@
 				array('POST', '/relay/me/create/', function () {
 					Response::result($this->relay->createRelayUser());
 				}, 'Create user account.'),
+			]);
+		}
+
+		private function declareDevRoutes() {
+			$this->altoRouter->addRoutes([
+				array('GET', '/server/', function () {
+					$response['SERVER']           = $_SERVER;
+					$response['APACHE']           = apache_request_headers();
+					$response['POST']             = $_POST;
+					$response['USER']['INFO']     = $this->dataporten->getUserInfo();
+					$response['USER']['GROUPS']   = $this->dataporten->getUserGroups();
+					$response['RELAY']['USER']    = $this->relay->getRelayUser();
+					$response['RELAY']['VERSION'] = $this->relay->getRelayVersion();
+					Response::result($response);
+				}, 'Dev route for testing.'),
 			]);
 		}
 

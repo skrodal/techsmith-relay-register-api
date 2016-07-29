@@ -139,9 +139,6 @@
 				// CHECK ABOVE FIRST!
 				$result = $this->relaySQLConnection->query($SQL);
 
-				$userAccount['SERVER']      = $_SERVER;
-				$userAccount['APACHE']      = apache_request_headers();
-				$userAccount['POST']        = $_POST;
 				$userAccount['sqlresponse'] = $result;
 
 				return $userAccount;
