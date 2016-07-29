@@ -40,12 +40,12 @@
 
 				// Details that will be returned to the client (user):
 				$newAccount                = [];
-				$newAccount['password']    = $this->generatePassword(10);
+				$newAccount['userPassword']    = $this->generatePassword(10);
 				//
 				// Details that will be added to the account
 				$accountInsert                    = [];
 				$accountInsert['passwordSalt']    = $this->generateSalt();
-				$accountInsert['userPassword']    = $this->hashPassword($newAccount['password'], $accountInsert['passwordSalt']);
+				$accountInsert['userPassword']    = $this->hashPassword($newAccount['userPassword'], $accountInsert['passwordSalt']);
 				$accountInsert['userName']        = $this->dataporten->userName();
 				$accountInsert['userDisplayName'] = $this->dataporten->userDisplayName();
 				$accountInsert['userEmail']       = $this->dataporten->userEmail();
