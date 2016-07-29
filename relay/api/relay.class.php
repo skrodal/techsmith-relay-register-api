@@ -8,6 +8,7 @@
 	use Relay\Auth\Dataporten;
 	use Relay\Conf\Config;
 	use Relay\Database\RelaySQLConnection;
+	use Relay\Utils\Response;
 
 	class Relay {
 		private $relaySQLConnection, $dataporten, $config;
@@ -60,6 +61,14 @@
 			}
 		}
 
+		public function employeeProfileId() {
+			return (int)$this->config['employeeProfileId'];
+		}
+
+		public function studentProfileId() {
+			return (int)$this->config['studentProfileId'];
+		}
+
 		public function createRelayUser() {
 			$affiliation = $_POST['userAffiliation'];
 
@@ -104,8 +113,8 @@
                     SELECT 
                     '" . $userAccount['userName'] . "', 
                     '" . $userAccount['userDisplayName'] . "', 
-                    '" . $userAccount['passwordHashed'] ."', 
-                    '" . $userAccount['userEmail'] ."',  
+                    '" . $userAccount['passwordHashed'] . "', 
+                    '" . $userAccount['userEmail'] . "',  
                     userAccountType, userTechSmithId, userAnonymous, userMaster, userLocked, 
                     userLockedAtTime, userGetsAdminEmail, userLdapName, userPasswordHashAlgo, 
                     '" . $userAccount['passwordSalt'] . "', 
@@ -130,8 +139,8 @@
 				// CHECK ABOVE FIRST!
 				$result = $this->relaySQL->query($SQL);
 
-				$userAccount['headers'] = $_SERVER;
-				$userAccount['post'] = $_POST;
+				$userAccount['headers']     = $_SERVER;
+				$userAccount['post']        = $_POST;
 				$userAccount['sqlresponse'] = $result;
 
 				return $userAccount;
@@ -139,18 +148,6 @@
 				// User exists already
 				Response::error(403, "Account already exists!");
 			}
-		}
-
-		public function employeeProfileId() {
-			return (int)$this->config['employeeProfileId'];
-		}
-
-		public function studentProfileId() {
-			return (int)$this->config['studentProfileId'];
-		}
-
-		public function kindId() {
-			return $this->config['kindId'];
 		}
 
 		private function getUserId() {
@@ -173,7 +170,6 @@
 			return md5(uniqid(mt_rand(), true));
 		}
 
-		// SHA384
 		private function hashPassword($password, $salt) {
 			$hashedPassword         = hash('sha384', $password . $salt);
 			$TIMES_TO_HASH_PASSWORD = 2;
@@ -182,5 +178,11 @@
 			}
 
 			return $hashedPassword;
+		}
+
+		// SHA384
+
+		public function kindId() {
+			return $this->config['kindId'];
 		}
 	}
