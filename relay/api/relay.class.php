@@ -73,12 +73,14 @@
 		public function createRelayUser() {
 			// $affiliation = $_POST['userAffiliation'];
 			$affiliation = Utils::getRequestBody('userAffiliation');
+			error_log($affiliation);
+			error_log(json_encode($affiliation));
 
 			// Only create if user does not already exist
 			if($this->getUserId()) {
 				$profileID = NULL;
 				// Match affiliation with a Profile ID in Relay
-				switch(trim(strtolower($affiliation))) {
+				switch(strtolower(trim($affiliation))) {
 					case 'student':
 						$profileID = $this->relaySQL->studentProfileId();
 						break;
