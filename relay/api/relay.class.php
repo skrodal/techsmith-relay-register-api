@@ -225,6 +225,12 @@
 		}
 
 		public function getSchema($table){
-			return $this->relaySQLConnection->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table'");
+			$response = $this->relaySQLConnection->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table'");
+			$newResponse = [];
+			foreach($response as $index => $obj){
+				$newResponse[] = $obj['COLUMN_NAME'];
+			}
+
+			return implode (", ", $newResponse);
 		}
 	}
