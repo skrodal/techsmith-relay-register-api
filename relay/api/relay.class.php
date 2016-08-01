@@ -59,7 +59,7 @@
 		}
 
 		public function getSubscriberDetails(){
-			$details = $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId() . '1');
+			$details = $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
 			//
 			if($details['status']){
 				return $details['data'];
