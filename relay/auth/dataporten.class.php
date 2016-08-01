@@ -91,6 +91,7 @@
 
 		public function userAffiliation() {
 			$affiliation = null;
+			return 'student';
 			foreach($this->userGroups as $group){
 				if($group['type'] === 'fc:org') {
 					if(!empty($group['membership']['primaryAffiliation'])){
