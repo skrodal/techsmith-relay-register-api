@@ -23,23 +23,29 @@
 			$this->isOrgSubscriber();
 		}
 
-		/**
-		 * Call Kind API endpoint with details for Relay org subscription for logged in user.
-		 * @return mixed
-		 */
+
 		public function isOrgSubscriber() {
+			// Will exit if not employee | student
+			$this->getRelayProfileIdFromAffiliation();
+			// Call Kind API endpoint to get subscription details
 			$details = $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
 			// Will be false if Kind API did not find a valid subscription
 			if($details['status']){
-				// A higher code means no subscription
+				// A higher code means no active subscription
 				if($details['data']['subscription_code'] <= 20){
-					// Check affiliation match
-					if(strcasecmp($this->dataporten->userAffiliation(), trim(strtolower($details['data']['affiliation_access']))) == 0){
+					// Check if subscription is set for staff and students (affiliation member) in Kind
+					if(strcasecmp('member', trim($details['data']['affiliation_access'])) == 0){
 						return true;
 					}
+					// ...otherwise check for explicit employee|student match
+					if(strcasecmp($this->dataporten->userAffiliation(), trim($details['data']['affiliation_access'])) == 0){
+						return true;
+					}
+					// User's affiliation does not have access
 					Response::error(403, "Ditt lærested abonnerer ikke på tjenesten på vegne av tilhørighet [" . $this->dataporten->userAffiliation() . "]");
 				}
 			}
+			// User's org does not subscribe to the service
 			Response::error(403, "Ditt lærested abonnerer ikke på tjenesten.");
 		}
 

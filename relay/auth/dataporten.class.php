@@ -91,7 +91,6 @@
 
 		public function userAffiliation() {
 			$affiliation = null;
-			return 'student';
 			foreach($this->userGroups as $group){
 				if($group['type'] === 'fc:org') {
 					if(!empty($group['membership']['primaryAffiliation'])){
@@ -99,6 +98,7 @@
 					}
 				}
 			}
+			//
 			Response::error(401, "Tjenesten fikk ikke tilgang til din tilhørighet fra Feide ('primaryAffiliation').");
 		}
 
