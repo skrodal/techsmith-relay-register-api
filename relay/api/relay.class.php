@@ -59,7 +59,12 @@
 		}
 
 		public function getSubscriberDetails(){
-			return $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
+			$details = $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId() . '1');
+			//
+			if($details['status']){
+				return $details['data'];
+			}
+			Response::error(204, "Fant ikke abonnementsinformasjon for " . $this->dataporten->userOrgId() . " i Kind.");
 		}
 
 		/**
