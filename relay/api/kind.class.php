@@ -16,7 +16,7 @@
 			return $this->dataportenClient->get($this->dataportenClient->getConfig()['api_endpoints']['kind'] . $route);
 		}
 
-		public function orgSubscriberDetails($orgId){
-			return $this->callAPI('service/' . $this->relay->kindId() . '/org/' . $orgId . '/');
+		public function orgSubscriberDetails($serviceKindId, $orgId){
+			return $this->callAPI('service/' . $serviceKindId . '/org/' . $orgId . '/');
 		}
 	}

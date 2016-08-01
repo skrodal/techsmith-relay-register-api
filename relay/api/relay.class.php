@@ -28,7 +28,7 @@
 		 * @return mixed
 		 */
 		public function verifyOrgSubscription(){
-			return $this->kind->orgSubscriberDetails($this->dataporten->userOrgId());
+			return $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
 		}
 
 		/**
