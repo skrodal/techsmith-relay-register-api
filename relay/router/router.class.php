@@ -54,6 +54,11 @@
 					Response::result($this->relay->getRelayUser());
 				}, 'User account details..'),
 
+				array('GET', '/relay/org/subscription/', function () {
+					$this->relay = new Relay($this->dataporten);
+					Response::result($this->relay->getSubscriberDetails());
+				}, 'Get subscription details for logged on user's org.'),
+				
 				array('GET', '/service/testmode/', function () {
 					Response::result(Config::get('settings')['dev_mode']);
 				}, 'Testmode on/off.'),
@@ -86,7 +91,7 @@
 					$response['RELAY']['DB']['tblUserProfile']    = $this->relay->getSchema('tblUserProfile');
 					$response['RELAY']['DB']['tblRoleMembership'] = $this->relay->getSchema('tblRoleMembership');
 					$response['RELAY']['VERSION']                 = $this->relay->getRelayVersion();
-					$response['RELAY']['ORG']['SUBSCRIPTION']     = $this->relay->verifyOrgSubscription();
+					$response['RELAY']['ORG']['SUBSCRIPTION']     = $this->relay->getSubscriberDetails();
 					Response::result($response);
 				}, 'Dev route for testing.'),
 			]);

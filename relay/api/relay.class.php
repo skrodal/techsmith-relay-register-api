@@ -24,7 +24,7 @@
 		}
 
 
-		public function verifyOrgSubscription() {
+		private function verifyOrgSubscription() {
 			// Will exit if not employee | student
 			$this->getRelayProfileIdFromAffiliation();
 			// Call Kind API endpoint to get subscription details
@@ -56,6 +56,10 @@
 			$sqlResponse = $this->relaySQLConnection->query("SELECT versValue FROM tblVersion")[0];
 
 			return $sqlResponse['versValue'];
+		}
+
+		public function getSubscriberDetails(){
+			return $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
 		}
 
 		/**
