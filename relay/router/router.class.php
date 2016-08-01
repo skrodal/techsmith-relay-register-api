@@ -93,7 +93,7 @@
 					$response['RELAY']['DB']['tblUserProfile']    = $this->relay->getSchema('tblUserProfile');
 					$response['RELAY']['DB']['tblRoleMembership'] = $this->relay->getSchema('tblRoleMembership');
 					$response['RELAY']['VERSION']                 = $this->relay->getRelayVersion();
-					$response['RELAY']['ORG']['SUBSCRIPTION']     = $this->relay->verifyOrgSubscription();
+					$response['RELAY']['ORG']['SUBSCRIPTION']     = $this->relay->isOrgSubscriber();
 					Response::result($response);
 				}, 'Dev route for testing.'),
 			]);

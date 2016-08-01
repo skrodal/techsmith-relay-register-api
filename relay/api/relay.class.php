@@ -19,16 +19,28 @@
 			$this->relaySQLConnection = new RelaySQLConnection($this->config);
 			$this->dataporten         = $dataPorten;
 			$this->kind               = $kind;
-
-			$this->verifyOrgSubscription();
+			// Check that org has access (will exit otherwise)
+			$this->isOrgSubscriber();
 		}
 
 		/**
 		 * Call Kind API endpoint with details for Relay org subscription for logged in user.
 		 * @return mixed
 		 */
-		public function verifyOrgSubscription(){
-			return $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
+		public function isOrgSubscriber() {
+			$details = $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
+			// Will be false if Kind API did not find a valid subscription
+			if($details['status']){
+				// A higher code means no subscription
+				if($details['data']['subscription_code'] <= 20){
+					// Check affiliation match
+					if(strcasecmp($this->dataporten->userAffiliation(), trim(strtolower($details['data']['affiliation_access']))) == 0){
+						return true;
+					}
+					Response::error(403, "Ditt lærested abonnerer ikke på tjenesten på vegne av tilhørighet [" + $this->dataporten->userAffiliation() + "]");
+				}
+			}
+			Response::error(403, "Ditt lærested abonnerer ikke på tjenesten.");
 		}
 
 		/**
