@@ -42,11 +42,11 @@
 						return true;
 					}
 					// User's affiliation does not have access
-					Response::error(403, "Ditt lærested abonnerer ikke på tjenesten på vegne av tilhørighet [" . $this->dataporten->userAffiliation() . "]");
+					Response::error(403, "Beklager, ditt lærested tilbyr ikke tjenesten for personer med tilhørighet som '" . $this->dataporten->userAffiliation() . "'.");
 				}
 			}
 			// User's org does not subscribe to the service
-			Response::error(403, "Ditt lærested abonnerer ikke på tjenesten.");
+			Response::error(403, "Beklager, ditt lærested abonnerer ikke på tjenesten.");
 		}
 
 		/**
