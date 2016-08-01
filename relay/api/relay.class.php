@@ -103,7 +103,7 @@
 				return $newAccount;
 			} else {
 				// User exists already
-				Response::error(403, "Account already exists!");
+				Response::error(403, "Konto med brukernavn '" . $this->dataporten->userName() . "' eksisterer allerede.");
 			}
 		}
 
@@ -129,7 +129,7 @@
 					return $this->employeeProfileId();
 				default:
 					// Exit with error if no student/employee affiliation
-					Response::error(403, "Affiliation is invalid/missing: " . $this->dataporten->userAffiliation());
+					Response::error(403, "Du må ha tilhørighet som student eller ansatt, men jeg fant ingen av delene: " . $this->dataporten->userAffiliation());
 			}
 		}
 

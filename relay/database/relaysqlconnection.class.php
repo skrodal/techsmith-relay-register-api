@@ -26,7 +26,7 @@
 			$query = mssql_query($sql, $this->connection);
 			// On error
 			if($query === false) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB query failed (SQL).');
+				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' Samtale med database feilet (SQL).');
 			}
 			// Response
 			$response = array();
@@ -55,11 +55,11 @@
 			$connection = mssql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
 			//
 			if(!$connection) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB connection failed (SQL).');
+				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' Kan ikke koble til database.');
 			}
 			//
 			if(!mssql_select_db($this->config['db'])) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' DB table connection failed (SQL).');
+				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' Kan ikke koble til databasens tabell.');
 			}
 
 			Utils::log("DB CONNECTED");

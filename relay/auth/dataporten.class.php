@@ -18,7 +18,7 @@
 			$this->checkGateKeeperCredentials();
 			// Will exit if client does not have required scope
 			if(!$this->hasDataportenScope('admin')) {
-				Response::error(403, $_SERVER["SERVER_PROTOCOL"] . ' Client does not have required scope to access this API.');
+				Response::error(403, $_SERVER["SERVER_PROTOCOL"] . ' Tjenesten mangler nødvendige rettigheter (scope) for å kunne fortsette.');
 			};
 			// Endpoint /userinfo/
 			$this->userInfo = $this->getUserInfo();
@@ -68,7 +68,7 @@
 		private function protectedRequest($url) {
 			$token = $_SERVER['HTTP_X_DATAPORTEN_TOKEN'];
 			if(empty($token)) {
-				Response::error(403, "Missing token: Cannot get userinfo.");
+				Response::error(403, "Tjenesten fikk ikke tilgang til å hente brukerinfo.");
 			}
 
 			$opts    = array(
@@ -83,7 +83,7 @@
 
 			$data = json_decode($result, true);
 			if(empty($data)) {
-				Response::error(204, "No content. The API provided no response ($http_response_header[0])");
+				Response::error(204, "Tjenesten fant ikke noe informasjon om din (Feide) bruker.");
 			}
 
 			return $data;
@@ -98,7 +98,7 @@
 					}
 				}
 			}
-			Response::error(401, "User affiliation was not found.");
+			Response::error(401, "Tjenesten fikk ikke tilgang til din tilhørighet fra Feide ('primaryAffiliation').");
 		}
 
 		public function userDisplayName() {
@@ -125,7 +125,7 @@
 
 		private function getFeideUsername() {
 			if(!isset($_SERVER["HTTP_X_DATAPORTEN_USERID_SEC"])) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (user not found)');
+				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Tjenesten ble nektet tilgang (fikk ikke tak i ditt brukernavn)');
 			}
 
 			$userIdSec = NULL;
@@ -145,7 +145,7 @@
 			}
 			// No Feide...
 			if(!isset($userIdSec)) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (user not found)');
+				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Tjenesten ble nektet tilgang (fikk ikke tak i ditt brukernavn)');
 			}
 
 			// 'username@org.no'

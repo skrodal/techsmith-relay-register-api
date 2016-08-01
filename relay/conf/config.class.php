@@ -19,7 +19,7 @@
 			$config = file_get_contents($file);
 			// Sanity
 			if($config === false) {
-				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' Config not found: ' . basename($file));
+				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . ' En feil oppstod i samtale med tjener (config not found)');
 			}
 			return json_decode($config, true);
 		}
