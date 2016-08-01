@@ -7,8 +7,8 @@
 	class Kind {
 		private $dataportenClient;
 
-		function __construct(DataportenClient $dataportenClient) {
-			$this->dataportenClient = $dataportenClient;
+		function __construct() {
+			$this->dataportenClient = new DataportenClient();
 		}
 
 		// Access routes in the Kind API

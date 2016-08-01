@@ -13,18 +13,18 @@
 	class Relay {
 		private $relaySQLConnection, $dataporten, $kind, $config;
 
-		function __construct(Dataporten $dataPorten, Kind $kind) {
+		function __construct(Dataporten $dataPorten) {
 			// Will exit on fail
 			$this->config             = Config::getConfigFromFile(Config::get('auth')['relay_sql']);
 			$this->relaySQLConnection = new RelaySQLConnection($this->config);
 			$this->dataporten         = $dataPorten;
-			$this->kind               = $kind;
+			$this->kind               = new Kind();
 			// Check that org has access (will exit otherwise)
-			$this->isOrgSubscriber();
+			$this->verifyOrgSubscription();
 		}
 
 
-		public function isOrgSubscriber() {
+		public function verifyOrgSubscription() {
 			// Will exit if not employee | student
 			$this->getRelayProfileIdFromAffiliation();
 			// Call Kind API endpoint to get subscription details

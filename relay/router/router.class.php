@@ -8,10 +8,8 @@
 
 	namespace Relay\Router;
 
-	use Relay\Api\Kind;
 	use Relay\Api\Relay;
 	use Relay\Auth\Dataporten;
-	use Relay\Auth\DataportenClient;
 	use Relay\Conf\Config;
 	use Relay\Utils\Response;
 	use Relay\Vendor\AltoRouter;
@@ -19,19 +17,14 @@
 
 	class Router {
 
-		private $altoRouter, $relay, $kind, $dataporten, $dataportenClient;
+		private $altoRouter, $relay, $dataporten;
 
 		function __construct() {
 			### ALTO ROUTER
 			$this->altoRouter = new AltoRouter();
 			$this->altoRouter->setBasePath(Config::get('altoRouter')['api_base_path']);
 			### DATAPORTEN
-			$this->dataporten       = new Dataporten();
-			$this->dataportenClient = new DataportenClient();
-			### KIND
-			$this->kind = new Kind($this->dataportenClient);
-			### RELAY
-			$this->relay = new Relay($this->dataporten, $this->kind);
+			$this->dataporten = new Dataporten();
 			// Make all GET routes available
 			$this->declareGetRoutes();
 			// Make all POST routes available
@@ -51,15 +44,13 @@
 					Response::result($this->altoRouter->getRoutes());
 				}, 'All available routes.'),
 
-				array('GET', '/kind/subscribers/', function () {
-					Response::result($this->kind->callAPI('service/' . $this->relay->kindId() . '/subscribers/'));
-				}, 'Test kind.'),
-
 				array('GET', '/relay/version/', function () {
+					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->getRelayVersion());
 				}, 'TechSmith Relay version.'),
 
 				array('GET', '/relay/me/', function () {
+					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->getRelayUser());
 				}, 'User account details..'),
 
@@ -73,6 +64,7 @@
 		private function declarePostRoutes() {
 			$this->altoRouter->addRoutes([
 				array('POST', '/relay/me/create/', function () {
+					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->createRelayUser());
 				}, 'Create user account.'),
 			]);
@@ -81,6 +73,7 @@
 		private function declareDevRoutes() {
 			$this->altoRouter->addRoutes([
 				array('GET', '/server/', function () {
+					$this->relay = new Relay($this->dataporten);
 					$response['SERVER']                           = $_SERVER;
 					$response['APACHE']                           = apache_request_headers();
 					$response['USER']['INFO']                     = $this->dataporten->getUserInfo();
@@ -93,7 +86,7 @@
 					$response['RELAY']['DB']['tblUserProfile']    = $this->relay->getSchema('tblUserProfile');
 					$response['RELAY']['DB']['tblRoleMembership'] = $this->relay->getSchema('tblRoleMembership');
 					$response['RELAY']['VERSION']                 = $this->relay->getRelayVersion();
-					$response['RELAY']['ORG']['SUBSCRIPTION']     = $this->relay->isOrgSubscriber();
+					$response['RELAY']['ORG']['SUBSCRIPTION']     = $this->relay->verifyOrgSubscription();
 					Response::result($response);
 				}, 'Dev route for testing.'),
 			]);
