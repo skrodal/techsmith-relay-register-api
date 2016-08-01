@@ -81,15 +81,18 @@
 		private function declareDevRoutes() {
 			$this->altoRouter->addRoutes([
 				array('GET', '/server/', function () {
-					$response['SERVER']                       = $_SERVER;
-					$response['APACHE']                       = apache_request_headers();
-					$response['USER']['INFO']                 = $this->dataporten->getUserInfo();
-					$response['USER']['GROUPS']               = $this->dataporten->getUserGroups();
-					$response['RELAY']['USER']['ALL']         = $this->relay->getRelayUser();
-					$response['RELAY']['USER']['ID']          = $this->relay->getRelayUserId();
-					$response['RELAY']['USER']['HAS_ACCOUNT'] = $this->relay->getRelayAccountExists();
-					$response['RELAY']['USER']['PROFILE_ID']  = $this->relay->getRelayProfileIdFromAffiliation();
-					$response['RELAY']['VERSION']             = $this->relay->getRelayVersion();
+					$response['SERVER']                           = $_SERVER;
+					$response['APACHE']                           = apache_request_headers();
+					$response['USER']['INFO']                     = $this->dataporten->getUserInfo();
+					$response['USER']['GROUPS']                   = $this->dataporten->getUserGroups();
+					$response['RELAY']['USER']['ALL']             = $this->relay->getRelayUser();
+					$response['RELAY']['USER']['ID']              = $this->relay->getRelayUserId();
+					$response['RELAY']['USER']['HAS_ACCOUNT']     = $this->relay->getRelayAccountExists();
+					$response['RELAY']['USER']['PROFILE_ID']      = $this->relay->getRelayProfileIdFromAffiliation();
+					$response['RELAY']['DB']['tblUser']           = $this->relay->getSchema('tblUser');
+					$response['RELAY']['DB']['tblUserProfile']    = $this->relay->getSchema('tblUserProfile');
+					$response['RELAY']['DB']['tblRoleMembership'] = $this->relay->getSchema('tblRoleMembership');
+					$response['RELAY']['VERSION']                 = $this->relay->getRelayVersion();
 					Response::result($response);
 				}, 'Dev route for testing.'),
 			]);

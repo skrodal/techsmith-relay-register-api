@@ -223,4 +223,8 @@
 		public function kindId() {
 			return $this->config['kindId'];
 		}
+
+		public function getSchema($table){
+			return $this->relaySQLConnection->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table'");
+		}
 	}
