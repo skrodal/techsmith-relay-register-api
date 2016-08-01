@@ -15,4 +15,8 @@
 		public function callAPI($route) {
 			return $this->dataportenClient->get($this->dataportenClient->getConfig()['api_endpoints']['kind'] . $route);
 		}
+
+		public function orgSubscriberDetails($orgId){
+			return $this->callAPI('service/' . $this->relay->kindId() . '/org/' . $orgId . '/');
+		}
 	}

@@ -28,10 +28,10 @@
 			### DATAPORTEN
 			$this->dataporten       = new Dataporten();
 			$this->dataportenClient = new DataportenClient();
-			### RELAY
-			$this->relay = new Relay($this->dataporten);
 			### KIND
 			$this->kind = new Kind($this->dataportenClient);
+			### RELAY
+			$this->relay = new Relay($this->dataporten, $this->kind);
 			// Make all GET routes available
 			$this->declareGetRoutes();
 			// Make all POST routes available
@@ -93,6 +93,7 @@
 					$response['RELAY']['DB']['tblUserProfile']    = $this->relay->getSchema('tblUserProfile');
 					$response['RELAY']['DB']['tblRoleMembership'] = $this->relay->getSchema('tblRoleMembership');
 					$response['RELAY']['VERSION']                 = $this->relay->getRelayVersion();
+					$response['RELAY']['ORG']['SUBSCRIPTION']     = $this->relay->verifyOrgSubscription();
 					Response::result($response);
 				}, 'Dev route for testing.'),
 			]);

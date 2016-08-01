@@ -11,13 +11,24 @@
 	use Relay\Utils\Response;
 
 	class Relay {
-		private $relaySQLConnection, $dataporten, $config;
+		private $relaySQLConnection, $dataporten, $kind, $config;
 
-		function __construct(Dataporten $dataPorten) {
+		function __construct(Dataporten $dataPorten, Kind $kind) {
 			// Will exit on fail
 			$this->config             = Config::getConfigFromFile(Config::get('auth')['relay_sql']);
 			$this->relaySQLConnection = new RelaySQLConnection($this->config);
 			$this->dataporten         = $dataPorten;
+			$this->kind               = $kind;
+
+			$this->verifyOrgSubscription();
+		}
+
+		/**
+		 * Call Kind API endpoint with details for Relay org subscription for logged in user.
+		 * @return mixed
+		 */
+		public function verifyOrgSubscription(){
+			return $this->kind->orgSubscriberDetails($this->dataporten->userOrgId());
 		}
 
 		/**
@@ -58,13 +69,14 @@
 				$this->sqlAddUserRole($userId);
 				// 4. Now call the database and request info for the account we just made
 				$userAccount = $this->getRelayUser();
-				if(!empty($userAccount)){
+				if(!empty($userAccount)) {
 					// ...and supplement the account details we're about to send back to the client
 					$newAccount['userId']          = $userAccount['userId'];
 					$newAccount['userName']        = $userAccount['userName'];
 					$newAccount['userDisplayName'] = $userAccount['userDisplayName'];
 					$newAccount['userEmail']       = $userAccount['userEmail'];
 					$newAccount['userAffiliation'] = $userAccount['userAffiliation'];
+
 					// Done
 					return $newAccount;
 				} else {
@@ -224,13 +236,13 @@
 			return $this->config['kindId'];
 		}
 
-		public function getSchema($table){
-			$response = $this->relaySQLConnection->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table'");
+		public function getSchema($table) {
+			$response    = $this->relaySQLConnection->query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table'");
 			$newResponse = [];
-			foreach($response as $index => $obj){
+			foreach($response as $index => $obj) {
 				$newResponse[] = $obj['COLUMN_NAME'];
 			}
 
-			return implode (", ", $newResponse);
+			return implode(", ", $newResponse);
 		}
 	}
