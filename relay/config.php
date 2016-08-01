@@ -3,7 +3,7 @@
 	use Relay\Conf\Config;
 
 	// Writes to development DB if true!!
-	$devMode = true;
+	$devMode = false;
 	// Error logging
 	$debug = false;
 	// Remember to update .htacces as well:
