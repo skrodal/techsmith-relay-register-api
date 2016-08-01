@@ -18,7 +18,7 @@
 			$this->checkGateKeeperCredentials();
 			// Will exit if client does not have required scope
 			if(!$this->hasDataportenScope('admin')) {
-				Response::error(403, $_SERVER["SERVER_PROTOCOL"] . ' Tjenesten mangler nødvendige rettigheter (scope) for å kunne fortsette.');
+				Response::error(403, 'Tjenesten mangler nødvendige rettigheter (scope) for å kunne fortsette.');
 			};
 			// Endpoint /userinfo/
 			$this->userInfo = $this->getUserInfo();
@@ -35,7 +35,7 @@
 
 		private function checkGateKeeperCredentials() {
 			if(empty($_SERVER["PHP_AUTH_USER"]) || empty($_SERVER["PHP_AUTH_PW"])) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (Missing API Gatekeeper Credentials)');
+				Response::error(401, 'Unauthorized (Missing API Gatekeeper Credentials)');
 			}
 
 			// Gatekeeper. user/pwd is passed along by the Dataporten Gatekeeper and must matched that of the registered API:
@@ -43,7 +43,7 @@
 				(strcmp($_SERVER["PHP_AUTH_PW"], $this->config['passwd']) !== 0)
 			) {
 				// The status code will be set in the header
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Unauthorized (Incorrect API Gatekeeper Credentials)');
+				Response::error(401, 'Unauthorized (Incorrect API Gatekeeper Credentials)');
 			}
 		}
 
@@ -125,7 +125,7 @@
 
 		private function getFeideUsername() {
 			if(!isset($_SERVER["HTTP_X_DATAPORTEN_USERID_SEC"])) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Tjenesten ble nektet tilgang (fikk ikke tak i ditt brukernavn)');
+				Response::error(401, 'Tjenesten ble nektet tilgang (fikk ikke tak i ditt brukernavn)');
 			}
 
 			$userIdSec = NULL;
@@ -145,7 +145,7 @@
 			}
 			// No Feide...
 			if(!isset($userIdSec)) {
-				Response::error(401, $_SERVER["SERVER_PROTOCOL"] . ' Tjenesten ble nektet tilgang (fikk ikke tak i ditt brukernavn)');
+				Response::error(401, 'Tjenesten ble nektet tilgang (fikk ikke tak i ditt brukernavn)');
 			}
 
 			// 'username@org.no'

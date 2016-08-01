@@ -82,7 +82,7 @@
 		/**
 		 * Query for ID to check if user exists.
 		 */
-		private function getRelayAccountExists() {
+		public function getRelayAccountExists() {
 			$sqlResponse = $this->relaySQLConnection->query("
 				SELECT userId 
 				FROM tblUser 
@@ -92,7 +92,7 @@
 			return !empty($sqlResponse);
 		}
 
-		private function getRelayProfileIdFromAffiliation() {
+		public function getRelayProfileIdFromAffiliation() {
 			// Will exit if user affiliation is not found in /groups/me/groups/
 			switch($this->dataporten->userAffiliation()) {
 				case 'student':
@@ -160,7 +160,7 @@
 			return $this->relaySQLConnection->query($SQL);
 		}
 
-		private function getRelayUserId() {
+		public function getRelayUserId() {
 			$sqlResponse = $this->relaySQLConnection->query("
 				SELECT userId 
 				FROM tblUser 
