@@ -57,7 +57,7 @@
 				array('GET', '/relay/org/subscription/', function () {
 					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->getSubscriberDetails());
-				}, 'Get subscription details for logged on user's org.'),
+				}, 'Get subscription details for logged on users org.'),
 				
 				array('GET', '/service/testmode/', function () {
 					Response::result(Config::get('settings')['dev_mode']);
