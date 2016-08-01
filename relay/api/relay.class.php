@@ -90,6 +90,10 @@
 				$this->sqlCreateUser($accountInsert);
 				// a). Ask for the newly created user's ID
 				$userId = $this->getRelayUserId();
+				// If no ID returned, something is wrong...
+				if(empty($userId)){
+					Response::error(500, "Kunne ikke opprette konto. Feilmelding ['userId is null'].");
+				}
 				// 2. Associate new user with affiliated profile
 				$this->sqlAddUserProfile($userId, $profileID);
 				// 3. Associate new user with a role in tblRoleMembership (since v.4.0).
@@ -103,7 +107,6 @@
 					$newAccount['userDisplayName'] = $userAccount['userDisplayName'];
 					$newAccount['userEmail']       = $userAccount['userEmail'];
 					$newAccount['userAffiliation'] = $userAccount['userAffiliation'];
-
 					// Done
 					return $newAccount;
 				} else {
@@ -173,9 +176,7 @@
 		}
 
 		private function sqlCreateUser($accountInsert) {
-
-			// Actual Insert (consider utf8_decode...)
-			// NOTE! `FEIDE_USERNAME` is a dummy (model) user that already exists in tblUser
+			// Actual Insert (TODO: consider utf8_decode...)
 			$SQL = "
                     INSERT INTO tblUser (
 	                    userName, userDisplayName, userPassword, userEmail, userAccountType, 
@@ -194,6 +195,7 @@
                     FROM tblUser
                     WHERE userName = 'FEIDE_USERNAME'
                 ";
+			// Note: 'FEIDE_USERNAME' is a dummy user that already exists in tblUser
 
 			// Run & return
 			return $this->relaySQLConnection->query($SQL);
