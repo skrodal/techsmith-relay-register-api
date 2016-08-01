@@ -64,7 +64,7 @@
 			if($details['status']){
 				return $details['data'];
 			}
-			Response::error(204, "Fant ikke abonnementsinformasjon for " . $this->dataporten->userOrgId() . " i Kind.");
+			Response::error(404, "Fant ikke abonnementsinformasjon for " . $this->dataporten->userOrgId() . " i Kind.");
 		}
 
 		/**
