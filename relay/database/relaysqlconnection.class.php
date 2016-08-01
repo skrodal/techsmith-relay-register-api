@@ -26,7 +26,7 @@
 			$query = mssql_query($sql, $this->connection);
 			// On error
 			if($query === false) {
-				Response::error(500, $_SERVER["SERVER_PROTOCOL"] . ' Samtale med database feilet (SQL).');
+				Response::error(500, 'Samtale med database feilet (SQL).');
 			}
 			// Response
 			$response = array();

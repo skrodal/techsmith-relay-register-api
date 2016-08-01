@@ -101,7 +101,7 @@
 			if($match && is_callable($match['target'])) {
 				call_user_func_array($match['target'], $match['params']);
 			} else {
-				Response::error(404, $_SERVER["SERVER_PROTOCOL"] . " URLen det spørres etter finnes ikke.");
+				Response::error(404, "URLen det spørres etter finnes ikke.");
 			}
 		}
 

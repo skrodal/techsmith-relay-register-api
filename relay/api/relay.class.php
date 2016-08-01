@@ -35,72 +35,44 @@
 		public function createRelayUser() {
 			// Only create if user does not already exist
 			if(!$this->getRelayAccountExists()) {
-				// Will exit if student/employee is missing
+				// Will exit if student/employee affiliation is missing
 				$profileID = $this->getRelayProfileIdFromAffiliation();
-
 				// Details that will be returned to the client (user):
-				$newAccount                = [];
-				$newAccount['userPassword']    = $this->generatePassword(10);
-				//
-				// Details that will be added to the account
+				$newAccount                 = [];
+				$newAccount['userPassword'] = $this->generatePassword(10);
+				// Details that will be added to the new account
 				$accountInsert                    = [];
-				$accountInsert['passwordSalt']    = $this->generateSalt();
-				$accountInsert['userPassword']    = $this->hashPassword($newAccount['userPassword'], $accountInsert['passwordSalt']);
 				$accountInsert['userName']        = $this->dataporten->userName();
 				$accountInsert['userDisplayName'] = $this->dataporten->userDisplayName();
 				$accountInsert['userEmail']       = $this->dataporten->userEmail();
-				// Used to add user to a Relay profile
-				$accountInsert['profileId'] = $profileID;
+				$accountInsert['passwordSalt']    = $this->generateSalt();
+				$accountInsert['userPassword']    = $this->hashPassword($newAccount['userPassword'], $accountInsert['passwordSalt']);
 
+				// 1. Create user
+				$this->sqlCreateUser($accountInsert);
+				// a). Ask for the newly created user's ID
+				$userId = $this->getRelayUserId();
+				// 2. Associate new user with affiliated profile
+				$this->sqlAddUserProfile($userId, $profileID);
+				// 3. Associate new user with a role in tblRoleMembership (since v.4.0).
+				$this->sqlAddUserRole($userId);
+				// 4. Now call the database and request info for the account we just made
+				$userAccount = $this->getRelayUser();
+				if(!empty($userAccount)){
+					// ...and supplement the account details we're about to send back to the client
+					$newAccount['userId']          = $userAccount['userId'];
+					$newAccount['userName']        = $userAccount['userName'];
+					$newAccount['userDisplayName'] = $userAccount['userDisplayName'];
+					$newAccount['userEmail']       = $userAccount['userEmail'];
+					$newAccount['userAffiliation'] = $userAccount['userAffiliation'];
+					// Done
+					return $newAccount;
+				} else {
+					// Hmm. If we get here, something went wrong when registering the user. And, for some reason,
+					// it was not caught earlier in one of the registration queries.. Should never happen, but here goes:
+					Response::error(500, "En ukjent feil oppstod i registrering av din konto (createRelayUser).");
+				}
 
-				// TODO = CHECK BEFORE TESTING!
-				$SQL = "
-                    INSERT INTO tblUser (
-                    userName, userDisplayName, userPassword, userEmail, userAccountType, 
-                    userTechSmithId, userAnonymous, userMaster, userLocked, userLockedAtTime, 
-                    userGetsAdminEmail, userLdapName, userPasswordHashAlgo, userPasswordSalt, 
-                    createdOn, createdByUser, modifiedOn, modifiedByUser, modifiedByModule, modificationCount)
-
-                    SELECT 
-                    '" . $accountInsert['userName'] . "', 
-                    '" . $accountInsert['userDisplayName'] . "', 
-                    '" . $accountInsert['userPassword'] . "', 
-                    '" . $accountInsert['userEmail'] . "',  
-                    userAccountType, userTechSmithId, userAnonymous, userMaster, userLocked, 
-                    userLockedAtTime, userGetsAdminEmail, userLdapName, userPasswordHashAlgo, 
-                    '" . $accountInsert['passwordSalt'] . "', 
-                    createdOn, createdByUser, modifiedOn, modifiedByUser, modifiedByModule, modificationCount
-                    FROM tblUser
-                    WHERE userName = 'FEIDE_USERNAME'
-                ";
-
-				$SQL = "SELECT 
-                    '" . $accountInsert['userName'] . "', 
-                    '" . $accountInsert['userDisplayName'] . "', 
-                    '" . $accountInsert['passwordHashed'] . "', 
-                    '" . $accountInsert['userEmail'] . "',  
-                    userAccountType, userTechSmithId, userAnonymous, userMaster, userLocked, 
-                    userLockedAtTime, userGetsAdminEmail, userLdapName, userPasswordHashAlgo, 
-                    '" . $accountInsert['passwordSalt'] . "', 
-                    createdOn, createdByUser, modifiedOn, modifiedByUser, modifiedByModule, modificationCount
-                    FROM tblUser
-                    WHERE userName = 'FEIDE_USERNAME'
-                ";
-
-				// CHECK ABOVE FIRST!
-				$result = $this->relaySQLConnection->query($SQL); // Run the insert
-
-
-				// Now call the database and request info for the account we just made
-				$userAccount                   = $this->getRelayUser();
-				// ...and supplement the account details we're about to send back to the client
-				$newAccount['userId']          = $userAccount['userId'];
-				$newAccount['userName']        = $userAccount['userName'];
-				$newAccount['userDisplayName'] = $userAccount['userDisplayName'];
-				$newAccount['userEmail']       = $userAccount['userEmail'];
-				$newAccount['userAffiliation'] = $userAccount['userAffiliation'];
-
-				return $newAccount;
 			} else {
 				// User exists already
 				Response::error(403, "Konto med brukernavn '" . $this->dataporten->userName() . "' eksisterer allerede.");
@@ -151,8 +123,6 @@
 			return md5(uniqid(mt_rand(), true));
 		}
 
-		// SHA384
-
 		private function hashPassword($password, $salt) {
 			$hashedPassword         = hash('sha384', $password . $salt);
 			$TIMES_TO_HASH_PASSWORD = 2;
@@ -161,6 +131,65 @@
 			}
 
 			return $hashedPassword;
+		}
+
+		private function sqlCreateUser($accountInsert) {
+
+			// Actual Insert (consider utf8_decode...)
+			// NOTE! `FEIDE_USERNAME` is a dummy (model) user that already exists in tblUser
+			$SQL = "
+                    INSERT INTO tblUser (
+	                    userName, userDisplayName, userPassword, userEmail, userAccountType, 
+	                    userTechSmithId, userAnonymous, userMaster, userLocked, userLockedAtTime, 
+	                    userGetsAdminEmail, userLdapName, userPasswordHashAlgo, userPasswordSalt, 
+	                    createdOn, createdByUser, modifiedOn, modifiedByUser, modifiedByModule, modificationCount)
+                    SELECT 
+	                    '" . $accountInsert['userName'] . "', 
+	                    '" . $accountInsert['userDisplayName'] . "', 
+	                    '" . $accountInsert['userPassword'] . "', 
+	                    '" . $accountInsert['userEmail'] . "',  
+	                    userAccountType, userTechSmithId, userAnonymous, userMaster, userLocked, 
+	                    userLockedAtTime, userGetsAdminEmail, userLdapName, userPasswordHashAlgo, 
+	                    '" . $accountInsert['passwordSalt'] . "', 
+	                    GETDATE(), createdByUser, GETDATE(), modifiedByUser, modifiedByModule, modificationCount
+                    FROM tblUser
+                    WHERE userName = 'FEIDE_USERNAME'
+                ";
+
+			// Run & return
+			return $this->relaySQLConnection->query($SQL);
+		}
+
+		private function getRelayUserId() {
+			$sqlResponse = $this->relaySQLConnection->query("
+				SELECT userId 
+				FROM tblUser 
+				WHERE userName LIKE '" . $this->dataporten->userName() . "'"
+			);
+
+			return !empty($sqlResponse) ? $sqlResponse[0]['userId'] : NULL;
+		}
+
+
+		private function sqlAddUserProfile($userId, $profileID) {
+			$SQL = "INSERT INTO tblUserProfile (
+					usprUser_userId, usprProfile_profId, usprAddedViaGroup, createdOn, createdByUser, 
+					modifiedOn, modifiedByUser, modifiedByModule, modificationCount) 
+					VALUES (
+					$userId, $profileID, 0, GETDATE(),'Original Record', GETDATE(), 'Original Record', 'Original Record', 0);";
+
+			// Run & return
+			return $this->relaySQLConnection->query($SQL);
+		}
+
+		private function sqlAddUserRole($userId) {
+			// Presenter role == 3 which is the role all users get by default.
+			$SQL = "INSERT INTO tblRoleMembership (
+					rmUser_userId, rmRole_RoleId, createdOn, createdByUser, modifiedOn, modifiedByUser, modifiedByModule, modificationCount) 
+					VALUES ($userId, 3, GETDATE(), 'registration_script', GETDATE(), 'registration_script', 'Original Record', 0);";
+
+			// Run & return
+			return $this->relaySQLConnection->query($SQL);
 		}
 
 		/**
@@ -174,24 +203,20 @@
 				AND userName = '" . $this->dataporten->userName() . "'");
 
 			// Convert affiliation code to text
-			// Some test users have more than one profile, thus the SQL query may return more than one entry for a single user.
-			// Since we're after a specific profile - either employeeProfileId or studentProfileId - run this check and return entry
-			// as soon as we have a match.
 			if(!empty($sqlResponse)) {
-				foreach($sqlResponse as $key => $info) {
-					switch($sqlResponse[$key]['userAffiliation']) {
-						case $this->employeeProfileId():
-							$sqlResponse[$key]['userAffiliation'] = 'employee';
+				switch($sqlResponse[0]['userAffiliation']) {
+					case $this->employeeProfileId():
+						$sqlResponse[0]['userAffiliation'] = 'employee';
 
-							return $sqlResponse[$key];
-						case $this->studentProfileId():
-							$sqlResponse[$key]['userAffiliation'] = 'student';
+						return $sqlResponse[0];
+					case $this->studentProfileId():
+						$sqlResponse[0]['userAffiliation'] = 'student';
 
-							return $sqlResponse[$key];
-					}
+						return $sqlResponse[0];
 				}
 			} else {
-				return false;
+				//
+				return null;
 			}
 		}
 
