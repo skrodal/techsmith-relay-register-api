@@ -37,7 +37,7 @@
 					if(strcasecmp($this->dataporten->userAffiliation(), trim(strtolower($details['data']['affiliation_access']))) == 0){
 						return true;
 					}
-					Response::error(403, "Ditt lærested abonnerer ikke på tjenesten på vegne av tilhørighet [" + $this->dataporten->userAffiliation() + "]");
+					Response::error(403, "Ditt lærested abonnerer ikke på tjenesten på vegne av tilhørighet [" . $this->dataporten->userAffiliation() . "]");
 				}
 			}
 			Response::error(403, "Ditt lærested abonnerer ikke på tjenesten.");
