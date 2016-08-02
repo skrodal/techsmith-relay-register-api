@@ -18,3 +18,4 @@
 
 	//
 	require_once('relay/config.php');
+	require_once 'Mail.php';
