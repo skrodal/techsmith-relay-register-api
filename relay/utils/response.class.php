@@ -2,6 +2,7 @@
 	namespace Relay\Utils;
 	use Relay\Conf\Config;
 	use Mail;
+	use Net;
 
 	/**
 	 *
