@@ -14,7 +14,7 @@
 	// Add the file extensions to the SPL.
 	spl_autoload_extensions(".class.php");
 	// Register the default autoloader implementation in the php engine.
-	spl_autoload_register( function( $class ) { include $class . '.php'; });
+	spl_autoload_register();
 
 	//
 	require_once('relay/config.php');
