@@ -37,28 +37,33 @@
 
 		}
 
+		/**
+		 * INFO ROUTES
+		 *
+		 * @return string
+		 */
 		private function declareGetRoutes() {
 			$this->altoRouter->addRoutes([
 				// List all routes
 				array('GET', '/', function () {
 					Response::result($this->altoRouter->getRoutes());
 				}, 'All available routes.'),
-
+				//
 				array('GET', '/relay/version/', function () {
 					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->getRelayVersion());
 				}, 'TechSmith Relay version.'),
-
+				//
 				array('GET', '/relay/me/', function () {
 					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->getRelayUser());
 				}, 'User account details..'),
-
+				// FROM KIND
 				array('GET', '/relay/org/subscription/', function () {
 					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->getSubscriberDetails());
 				}, 'Get subscription details for logged on users org.'),
-				
+				// WHICH DB ARE WE READING FROM/WRITING TO?
 				array('GET', '/service/testmode/', function () {
 					Response::result(Config::get('settings')['dev_mode']);
 				}, 'Testmode on/off.'),
@@ -66,6 +71,11 @@
 			]);
 		}
 
+		/**
+		 * CREATES THE NEW USER ACCOUNT
+		 *
+		 * @return string
+		 */
 		private function declarePostRoutes() {
 			$this->altoRouter->addRoutes([
 				array('POST', '/relay/me/create/', function () {
@@ -75,6 +85,11 @@
 			]);
 		}
 
+		/**
+		 * DEV PATHS - ONLY AVAILABLE IF LOGGED ON USER IS FROM UNINETT
+		 *
+		 * @return string
+		 */
 		private function declareDevRoutes() {
 			$this->altoRouter->addRoutes([
 				array('GET', '/server/', function () {
