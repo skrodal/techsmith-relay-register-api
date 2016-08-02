@@ -19,5 +19,4 @@
 	//
 	require_once('relay/config.php');
 	set_include_path('/usr/share/php');
-	set_include_path('/usr/share/pear');
 	require_once 'Mail.php';
