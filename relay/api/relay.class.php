@@ -114,28 +114,30 @@
 
 				// 1. Create user
 				$this->sqlCreateUser($accountInsert);
-				// a). Ask for the newly created user's ID
+				// a). Ask DB for the newly created user's ID
 				$userId = $this->getRelayUserId();
 				// If no ID returned, something is wrong...
 				if(empty($userId)) {
-					Response::error(500, "Kunne ikke opprette konto. Feilmelding ['userId is null'].");
+					Response::error(500, "Kunne ikke opprette konto. Feilmelding: 'userId is null'.");
 				}
 				// 2. Associate new user with affiliated profile
 				$this->sqlAddUserProfile($userId, $profileID);
 				// 3. Associate new user with a role in tblRoleMembership (since v.4.0).
 				$this->sqlAddUserRole($userId);
 				// 4. Now call the database and request info for the account we just made
-				$userAccount = $this->getRelayUser();
-				if(!empty($userAccount)) {
+				$newUserAccount = $this->getRelayUser();
+				if(!empty($newUserAccount)) {
 					// ...and supplement the account details we're about to send back to the client
-					$newAccount['userId']          = $userAccount['userId'];
-					$newAccount['userName']        = $userAccount['userName'];
-					$newAccount['userDisplayName'] = $userAccount['userDisplayName'];
-					$newAccount['userEmail']       = $userAccount['userEmail'];
-					$newAccount['userAffiliation'] = $userAccount['userAffiliation'];
+					$newAccount['userId']          = $newUserAccount['userId'];
+					$newAccount['userName']        = $newUserAccount['userName'];
+					$newAccount['userDisplayName'] = $newUserAccount['userDisplayName'];
+					$newAccount['userFirstName']   = strtok($newUserAccount['userDisplayName'], " ");
+					$newAccount['userEmail']       = $newUserAccount['userEmail'];
+					$newAccount['userAffiliation'] = $newUserAccount['userAffiliation'];
 
 					// Send user a confirmation email with the account details
 					Utils::sendMail($newAccount);
+
 					// Done
 					return $newAccount;
 				} else {

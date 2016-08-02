@@ -106,6 +106,10 @@
 			return $this->userInfo['name'];
 		}
 
+		public function userFirstName() {
+			return strtok($this->userDisplayName(), " ");
+		}
+
 		public function userEmail() {
 			return $this->userInfo['email'];
 		}
