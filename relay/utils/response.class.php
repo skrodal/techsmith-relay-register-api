@@ -2,7 +2,6 @@
 	namespace Relay\Utils;
 	use Relay\Conf\Config;
 	use Mail;
-	use Net;
 
 	/**
 	 *
@@ -58,7 +57,7 @@
 		}
 
 		public static function sendMail($userInfo) {
-			require_once '/usr/share/php/Mail.php';
+			require_once 'Mail.php';
 			$config = Config::getConfigFromFile(Config::get('auth')['mail']);
 			$message = "
                         <html>

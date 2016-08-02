@@ -7,7 +7,8 @@
 		'auth',
 		'api',
 		'database',
-		'router'
+		'router',
+		'/usr/share/php/'
 	);
 	// Add the paths to the class directories to the include path.
 	set_include_path(dirname(__DIR__) . PATH_SEPARATOR . implode(PATH_SEPARATOR, $paths));
