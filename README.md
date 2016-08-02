@@ -1,6 +1,6 @@
 # TechSmith Relay User Registration
 
-** NOTE: Created to suit higher education in Norway; makes use of Dataporten (UNINETT) for client/user (O)Authentication.** 
+**NOTE: Created to suit higher education in Norway; makes use of Dataporten (UNINETT) for client/user (O)Authentication.** 
 
 This API facilitates self-service account registration with TechSmith Relay (Self-Hosted instance).
 
