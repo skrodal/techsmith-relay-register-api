@@ -1,6 +1,7 @@
 <?php
 	namespace Relay\Utils;
 	use Relay\Conf\Config;
+	use \usr\share\php\Mail;
 
 	/**
 	 *
@@ -117,13 +118,13 @@
 			                 'Content-Transfer-Encoding' => '8bit',
 			);
 
-			$smtp = Mail::factory('smtp',
+			$smtp = \Mail::factory('smtp',
 				array('host' => $config['host'],
 				      'port' => $config['port']));
 
 			$mail = $smtp->send($userInfo['userEmail'], $headers, $message);
 
-			if(PEAR::isError($mail)) {
+			if(\PEAR::isError($mail)) {
 				Response::error(500, "Epost med kontodetailjer feilet (".$mail->getMessage()."). Noter passordet for din konto (".$userInfo['userPassword'].") før du forlater denne siden.");
 			} else {
 				return "Kontodetaljer ble sendt til " . $userInfo['userEmail'];
