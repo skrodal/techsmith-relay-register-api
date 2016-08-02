@@ -9,6 +9,7 @@
 	use Relay\Conf\Config;
 	use Relay\Database\RelaySQLConnection;
 	use Relay\Utils\Response;
+	use Relay\Utils\Utils;
 
 	class Relay {
 		private $relaySQLConnection, $dataporten, $kind, $config;
@@ -133,6 +134,8 @@
 					$newAccount['userEmail']       = $userAccount['userEmail'];
 					$newAccount['userAffiliation'] = $userAccount['userAffiliation'];
 
+					// Send user a confirmation email with the account details
+					Utils::sendMail($newAccount);
 					// Done
 					return $newAccount;
 				} else {
@@ -201,7 +204,6 @@
                     WHERE userName = 'FEIDE_USERNAME'
                 ";
 			// Note: 'FEIDE_USERNAME' is a dummy user that already exists in tblUser
-
 			// Run & return
 			return $this->relaySQLConnection->query($SQL);
 		}
@@ -274,7 +276,7 @@
 			$newAccount['userEmail']       = 'simon.skrodal@uninett.no';
 			$newAccount['userPassword']    = '876r87sdfjshfkjshfkhsdflhdf7';
 
-			return Response::sendMail($newAccount);
+			return Utils::sendMail($newAccount);
 		}
 
 		public function getSchema($table) {
