@@ -56,8 +56,9 @@
 		}
 
 		public static function sendMail($userInfo) {
-			require_once 'Mail.php';
+
 			$config = Config::getConfigFromFile(Config::get('auth')['mail']);
+			require_once "'" .$config['mail_path'] ."'";
 
 			$message = "
                         <html>
