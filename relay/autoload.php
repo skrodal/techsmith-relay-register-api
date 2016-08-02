@@ -1,4 +1,7 @@
 <?php
+
+	require_once '/usr/share/php/Mail.php';
+
 	// Define the paths to the directories holding class files
 	$paths = array(
 		'conf',
@@ -18,4 +21,3 @@
 
 	//
 	require_once('relay/config.php');
-	require_once '/usr/share/php/Mail.php';
