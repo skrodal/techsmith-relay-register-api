@@ -30,15 +30,15 @@
 			// Call Kind API endpoint to get subscription details
 			$details = $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
 			// Will be false if Kind API did not find a valid subscription
-			if($details['status']){
+			if($details['status']) {
 				// A higher code means no active subscription
-				if($details['data']['subscription_code'] <= 20){
+				if($details['data']['subscription_code'] <= 20) {
 					// Check if subscription is set for staff and students (affiliation member) in Kind
-					if(strcasecmp('member', trim($details['data']['affiliation_access'])) == 0){
+					if(strcasecmp('member', trim($details['data']['affiliation_access'])) == 0) {
 						return true;
 					}
 					// ...otherwise check for explicit employee|student match
-					if(strcasecmp($this->dataporten->userAffiliation(), trim($details['data']['affiliation_access'])) == 0){
+					if(strcasecmp($this->dataporten->userAffiliation(), trim($details['data']['affiliation_access'])) == 0) {
 						return true;
 					}
 					// User's affiliation does not have access
@@ -47,6 +47,31 @@
 			}
 			// User's org does not subscribe to the service
 			Response::error(403, "Beklager, ditt lærested abonnerer ikke på tjenesten.");
+		}
+
+		public function getRelayProfileIdFromAffiliation() {
+			// Will exit if user affiliation is not found in /groups/me/groups/
+			switch($this->dataporten->userAffiliation()) {
+				case 'student':
+					return $this->studentProfileId();
+				case 'employee':
+					return $this->employeeProfileId();
+				default:
+					// Exit with error if no student/employee affiliation
+					Response::error(403, "Du må ha tilhørighet som student eller ansatt, men jeg fant ingen av delene: " . $this->dataporten->userAffiliation());
+			}
+		}
+
+		public function studentProfileId() {
+			return (int)$this->config['studentProfileId'];
+		}
+
+		public function employeeProfileId() {
+			return (int)$this->config['employeeProfileId'];
+		}
+
+		public function kindId() {
+			return $this->config['kindId'];
 		}
 
 		/**
@@ -58,10 +83,10 @@
 			return $sqlResponse['versValue'];
 		}
 
-		public function getSubscriberDetails(){
+		public function getSubscriberDetails() {
 			$details = $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
 			//
-			if($details['status']){
+			if($details['status']) {
 				return $details['data'];
 			}
 			Response::error(404, "Fant ikke abonnementsinformasjon for " . $this->dataporten->userOrgId() . " i Kind.");
@@ -91,7 +116,7 @@
 				// a). Ask for the newly created user's ID
 				$userId = $this->getRelayUserId();
 				// If no ID returned, something is wrong...
-				if(empty($userId)){
+				if(empty($userId)) {
 					Response::error(500, "Kunne ikke opprette konto. Feilmelding ['userId is null'].");
 				}
 				// 2. Associate new user with affiliated profile
@@ -107,6 +132,7 @@
 					$newAccount['userDisplayName'] = $userAccount['userDisplayName'];
 					$newAccount['userEmail']       = $userAccount['userEmail'];
 					$newAccount['userAffiliation'] = $userAccount['userAffiliation'];
+
 					// Done
 					return $newAccount;
 				} else {
@@ -132,27 +158,6 @@
 			);
 
 			return !empty($sqlResponse);
-		}
-
-		public function getRelayProfileIdFromAffiliation() {
-			// Will exit if user affiliation is not found in /groups/me/groups/
-			switch($this->dataporten->userAffiliation()) {
-				case 'student':
-					return $this->studentProfileId();
-				case 'employee':
-					return $this->employeeProfileId();
-				default:
-					// Exit with error if no student/employee affiliation
-					Response::error(403, "Du må ha tilhørighet som student eller ansatt, men jeg fant ingen av delene: " . $this->dataporten->userAffiliation());
-			}
-		}
-
-		public function studentProfileId() {
-			return (int)$this->config['studentProfileId'];
-		}
-
-		public function employeeProfileId() {
-			return (int)$this->config['employeeProfileId'];
 		}
 
 		private function generatePassword($length) {
@@ -261,8 +266,15 @@
 			}
 		}
 
-		public function kindId() {
-			return $this->config['kindId'];
+		public function sendTestMail() {
+			$newAccount                    = [];
+			$newAccount['userFirstName']   = 'Simon';
+			$newAccount['userName']        = 'simon@uninett.no';
+			$newAccount['userDisplayName'] = 'Simon Skrødal';
+			$newAccount['userEmail']       = 'simon.skrodal@uninett.no';
+			$newAccount['userPassword']    = '876r87sdfjshfkjshfkhsdflhdf7';
+
+			return Response::sendMail($newAccount);
 		}
 
 		public function getSchema($table) {

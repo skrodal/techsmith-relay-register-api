@@ -28,7 +28,8 @@
 			'auth'       => [
 				'dataporten'        => $configRoot . 'dataporten_config.js',
 				'dataporten_client' => $configRoot . 'dataporten_client_config.js',
-				'relay_sql'         => $relayConfigPath
+				'relay_sql'         => $relayConfigPath,
+				'mail'              => $configRoot . 'mail_config.js'
 			],
 			'utils'      => [
 				'debug' => $debug

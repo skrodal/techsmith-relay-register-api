@@ -94,6 +94,12 @@
 					$response['RELAY']['ORG']['SUBSCRIPTION']     = $this->relay->getSubscriberDetails();
 					Response::result($response);
 				}, 'Dev route for testing.'),
+
+				array('GET', '/server/mail/send/', function () {
+					$this->relay = new Relay($this->dataporten);
+					$response = $this->relay->sendTestMail();
+					Response::result($response);
+				}, 'Dev route to test sending email.'),
 			]);
 		}
 
