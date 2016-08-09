@@ -80,9 +80,10 @@
 		 */
 		public function getRelayVersion() {
 			// $sqlResponse = $this->relaySQLConnection->query("SELECT versValue FROM tblVersion")[0];
-			$sqlResponse = $this->relaySQLConnection->query("SELECT @@VERSION")[0];
 
-			return $sqlResponse;
+			//$sqlResponse = $this->relaySQLConnection->query("SELECT @@VERSION")[0];
+			// return $sqlResponse;
+			return $this->config['db'];
 			return $sqlResponse['versValue'];
 		}
 
