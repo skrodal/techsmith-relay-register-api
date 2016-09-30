@@ -38,7 +38,6 @@
 		public function get($url) {
 			// Gets/ (or sets) a token
 			$this->checkTokenValidity();
-
 			return $this->protectedRequest($url);
 		}
 
@@ -123,14 +122,11 @@
 				),
 			);
 			$context = stream_context_create($opts);
-			$result  = file_get_contents($url, false, $context);
-
-			$data = json_decode($result, true);
-			if(empty($data)) {
-				Response::error(204, "No content. The API provided no response ($http_response_header[0])");
+			if(empty($result = file_get_contents($url, false, $context))) {
+				$code = explode(' ',  $http_response_header[0])[1];
+				Response::error($code, "No details found in Kind: $http_response_header[0]");
 			}
-
-			return $data;
+			return json_decode($result, true);
 		}
 
 		// Process the API call request
