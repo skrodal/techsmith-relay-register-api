@@ -13,7 +13,11 @@
 
 		// Access routes in the Kind API
 		public function callAPI($route) {
-			return $this->dataportenClient->get($this->dataportenClient->getConfig()['api_endpoints']['kind'] . $route);
+			$response = $this->dataportenClient->get($this->dataportenClient->getConfig()['api_endpoints']['kind'] . $route);
+			if(is_null($response)){
+				return ['status' => false, 'code' =>  explode(' ',  $http_response_header[0])[1]];
+			}
+			return $response;
 		}
 
 		public function orgSubscriberDetails($serviceKindId, $orgId){

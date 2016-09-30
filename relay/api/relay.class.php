@@ -47,7 +47,7 @@
 				}
 			}
 			// User's org does not subscribe to the service
-			Response::error(403, "Beklager, ditt lærested abonnerer ikke på tjenesten.");
+			Response::error($details['code'], "Beklager, ditt lærested abonnerer ikke på tjenesten.");
 		}
 
 		public function getRelayProfileIdFromAffiliation() {
@@ -89,7 +89,7 @@
 			if($details['status']) {
 				return $details['data'];
 			}
-			Response::error(404, "Fant ikke abonnementsinformasjon for " . $this->dataporten->userOrgId() . " i Kind.");
+			Response::error($details['code'], "Fant ikke abonnementsinformasjon for " . $this->dataporten->userOrgId() . " i Kind.");
 		}
 
 		/**

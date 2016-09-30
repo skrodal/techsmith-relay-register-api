@@ -51,22 +51,17 @@
 			if(empty($_SESSION['token']) || empty($_SESSION['token_expires_in']) || empty($_SESSION['token_created'])) {
 				// error_log('Missing token info - getting new.');
 				$this->getToken();
-
 				return;
 			}
 			// Expired token
 			if(($_SESSION['token_created'] + $_SESSION['token_expires_in']) < time()) {
 				// error_log('Token expired - getting new.');
 				$this->getToken();
-
 				return;
 			}
-
 			// Token is still ok
 			$this->token = $_SESSION['token'];
 		}
-
-		//
 
 		private function getToken() {
 			// Sanity check
@@ -76,9 +71,7 @@
 			if(empty($this->config['dp_auth']['client_secret'])) {
 				Response::error(403, 'Configuration [client_secret] is REQUIRED but not set');
 			}
-
 			// error_log('Getting new token');
-
 			// Build query
 			$opts    = array(
 				'http' => array(
@@ -108,13 +101,19 @@
 			$_SESSION['token_expires_in'] = $token_expiry;
 		}
 
-		// Make an API call
 
+
+		/**
+		 * Make an API call
+		 *
+		 * @param $url
+		 *
+		 * @return mixed
+		 */
 		private function protectedRequest($url) {
 			if(empty($this->token)) {
 				Response::error(403, "Missing token: Request cannot be made.");
 			}
-
 			$opts    = array(
 				'http' => array(
 					'method' => 'GET',
@@ -123,8 +122,7 @@
 			);
 			$context = stream_context_create($opts);
 			if(empty($result = file_get_contents($url, false, $context))) {
-				$code = explode(' ',  $http_response_header[0])[1];
-				Response::error($code, "No details found in Kind: $http_response_header[0]");
+				return NULL;
 			}
 			return json_decode($result, true);
 		}
