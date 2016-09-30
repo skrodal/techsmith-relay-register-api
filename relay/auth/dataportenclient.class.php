@@ -122,6 +122,7 @@
 			);
 			$context = stream_context_create($opts);
 			if(empty($result = file_get_contents($url, false, $context))) {
+				// Caller will make an appropriate response
 				return NULL;
 			}
 			return json_decode($result, true);
