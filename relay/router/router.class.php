@@ -78,7 +78,7 @@
 				array('POST', '/relay/me/create/', function () {
 					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->createRelayUser());
-				}, 'Create user account.'),
+				}, 'Get all orgs in subscribers table (active and inactive).'),
 			]);
 		}
 
