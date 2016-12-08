@@ -74,7 +74,7 @@
 		public function getOrgAffiliationAccess($org) {
 			$table = $this->config['table'];
 
-			return $this->query("SELECT affiliation_access FROM $table WHERE org = $org");
+			return $this->query("SELECT affiliation_access FROM $table WHERE org = '$org'");
 		}
 
 		public function query($sql) {
