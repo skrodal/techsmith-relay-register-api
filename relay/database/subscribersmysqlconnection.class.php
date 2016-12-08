@@ -59,7 +59,7 @@
 	*/
 
 
-	namespace RelayRegister\database;
+	namespace Relay\Database;
 
 	use Relay\Utils\Response;
 
