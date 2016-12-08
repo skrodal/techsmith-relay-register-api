@@ -36,7 +36,7 @@
 			try {
 				return $this->conn->exec($sql);
 			} catch(PDOException $e) {
-				Response::error(500, 'Samtale med database feilet (SQL): ' . $e->getMessage() . '(' . $e->errorInfo . ')');
+				Response::error(500, 'Samtale med database feilet (SQL): ' . $e->getMessage() . '(' . $e->getTraceAsString() . ')');
 			}
 		}
 
