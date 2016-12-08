@@ -39,6 +39,43 @@
 			}
 		}
 
+		/**
+		 * @param $org
+		 *
+		 * @return bool
+		 */
+		public function deleteOrg($org) {
+			$this->conn = $this->getConnection();
+			$table = $this->config['table'];
+
+			try {
+				$stmt = $this->conn->prepare("DELETE FROM $table WHERE org = :org");
+				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
+				return $stmt->execute() > 0 ? true : false;
+			} catch(\PDOException $e) {
+				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
+			}
+		}
+
+		/**
+		 * @param $org
+		 *
+		 * @return bool
+		 */
+		public function insertOrg($org) {
+			$this->conn = $this->getConnection();
+			$table = $this->config['table'];
+
+			try {
+				$stmt = $this->conn->prepare("INSERT INTO $table (org, affiliation_access) VALUES (:org, :affiliation)");
+				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
+				$stmt->bindParam(':affiliation', $affiliation, \PDO::PARAM_STR);
+				return $stmt->execute() > 0 ? true : false;
+			} catch(\PDOException $e) {
+				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
+			}
+		}
+
 		public function getConnection() {
 			if(!is_null($this->conn)) {
 				return $this->conn;

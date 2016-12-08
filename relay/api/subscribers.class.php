@@ -27,6 +27,19 @@
 		}
 
 		/**
+		 * Remove a record in the table.
+		 *
+		 * Returns true if a line was deleted.
+		 *
+		 * @param $org
+		 *
+		 * @return bool
+		 */
+		public function deleteSubscriber($org){
+			return $this->subscribersMySQLConnection->deleteOrg($org);
+		}
+
+		/**
 		 * Query table for affiliation access for a given org
 		 *
 		 * @param $org

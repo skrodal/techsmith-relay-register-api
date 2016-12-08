@@ -17,12 +17,12 @@ NOTE: Use of Kind is deprecated since 08.12.2016
 ~~The API requires client access to the eCampus Kind API from UNINETT (https://github.com/skrodal/ecampus-kind-api). 
 As such, it will need client credentials to communicate with this API (see 'suitable client' below).~~   
 
-## Checking org access
+## Checking & updating org access
 
 The API was updated on 08.12.2016 to remove any dependencies on Kind. Instead, the API reads org access/affiliation 
 from a simple (MySQL) table (currently hosted on UNINETTs MySQL Cluster).
 
-To reproduce this table, which needs to be updated manually when new orgs subscribe to the service;
+To reproduce this table:
    
 ```sql
     CREATE TABLE relay_subscribers (
@@ -33,7 +33,8 @@ To reproduce this table, which needs to be updated manually when new orgs subscr
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
    	
-...where affiliation_access should be 'employee' or 'member' (for employee and student access).
+...where `affiliation_access` should be 'employee' or 'member' (for employee and student access) and `active` (0 or 1) indicates 
+whether or not the org has an active subscription (thus access to create accounts).
 
 Some starter values (orgs found in Kind for the service at the time of writing):
    
@@ -69,6 +70,9 @@ INSERT INTO relay_subscribers (org, affiliation_access, active)
         ('uninett.no', 'employee', 1);
 ```
 
+The Subscribers class implements routes for CRUD operations on the table (ONLY accessible to SuperAdmins, i.e. UNINETT users). 
+Currently, these routes are implemented in the registration client (see Suitable Client below) and made available IF  
+the logged on user is a SuperAdmin.
 
 ## Suitable Client
 
