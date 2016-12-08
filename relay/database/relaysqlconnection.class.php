@@ -33,11 +33,10 @@
 
 		public function execute($sql){
 			$this->conn = $this->getConnection();
-
 			try {
 				return $this->conn->exec($sql);
 			} catch(PDOException $e) {
-				Response::error(500, 'Samtale med database feilet (SQL): ' . $e->getMessage());
+				Response::error(500, 'Samtale med database feilet (SQL): ' . $e->getMessage() . '(' . $e->errorInfo . ')');
 			}
 		}
 
