@@ -71,6 +71,12 @@
 			$this->config = $config;
 		}
 
+		/**
+		 * Query table for affiliation access for a given org
+		 * @param $org
+		 *
+		 * @return array
+		 */
 		public function getOrgAffiliationAccess($org) {
 			$table = $this->config['table'];
 

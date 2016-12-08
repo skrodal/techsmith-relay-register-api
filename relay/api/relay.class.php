@@ -34,12 +34,12 @@
 
 			// 2. Check MySQL table for user's home org and affiliation access
 			$access = $this->subscribersMySQLConnection->getOrgAffiliationAccess($this->dataporten->userOrgId());
-			if(!isset($access['affiliation_access'])) {
+			if(!isset($access[0]['affiliation_access'])) {
 				// User's org does NOT subscribe to the service (not found in table)
 				Response::error(403, "Beklager, ditt lærested ser ikke ut til å abonnere på tjenesten.");
 			}
 			// 3. Check if home org allows user's affiliation access
-			switch(trim(strtolower($access['affiliation_access']))) {
+			switch(trim(strtolower($access[0]['affiliation_access']))) {
 				case 'employee':
 					// Org only allows employees
 					// Check that user's affiliation is employee
