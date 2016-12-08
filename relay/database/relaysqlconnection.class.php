@@ -3,8 +3,6 @@
 
 	use Relay\Utils\Response;
 
-	ini_set('mssql.charset', 'UTF-8');
-
 	class RelaySQLConnection {
 
 		private $config;

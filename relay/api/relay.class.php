@@ -10,22 +10,28 @@
 	use Relay\Database\RelaySQLConnection;
 	use Relay\Utils\Response;
 	use Relay\Utils\Utils;
+	use RelayRegister\database\SubscribersMySQLConnection;
 
 	class Relay {
-		private $relaySQLConnection, $dataporten, $kind, $config;
+		private $relaySQLConnection, $subscribersMySQLConnection, $dataporten, $kind, $config;
 
 		function __construct(Dataporten $dataPorten) {
 			// Will exit on fail
-			$this->config             = Config::getConfigFromFile(Config::get('auth')['relay_sql']);
-			$this->relaySQLConnection = new RelaySQLConnection($this->config);
-			$this->dataporten         = $dataPorten;
-			$this->kind               = new Kind();
+			$this->config                     = Config::getConfigFromFile(Config::get('auth')['relay_sql']);
+			$this->relaySQLConnection         = new RelaySQLConnection($this->config);
+			$this->subscribersMySQLConnection = new SubscribersMySQLConnection(Config::getConfigFromFile(Config::get('auth')['subscribers_mysql']));
+			$this->dataporten                 = $dataPorten;
+			$this->kind                       = new Kind();
 			// Check that org has access (will exit otherwise)
 			$this->verifyOrgSubscription();
 		}
 
 
 		private function verifyOrgSubscription() {
+			$access = $this->subscribersMySQLConnection->getOrgAffiliationAccess($this->dataporten->userOrgId());
+			error_log(json_encode($access));
+
+
 			// Will exit if not employee | student
 			$this->getRelayProfileIdFromAffiliation();
 			// Call Kind API endpoint to get subscription details
@@ -80,6 +86,7 @@
 		 */
 		public function getRelayVersion() {
 			$sqlResponse = $this->relaySQLConnection->query("SELECT versValue FROM tblVersion")[0];
+
 			return $sqlResponse['versValue'];
 		}
 

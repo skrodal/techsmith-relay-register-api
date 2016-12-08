@@ -86,16 +86,25 @@
 			}
 		}
 
+		public function getOrgAffiliationAccess($org){
+			$table = $this->config['table'];
+			return $this->query("SELECT affiliation_access FROM $table WHERE org = $org");
+		}
+
 		public function getConnection() {
 			if(!is_null($this->conn)) {
 				return $this->conn;
 			}
+			$host = $this->config['host'];
+			$db   = $this->config['db'];
+			$user = $this->config['user_rw'];
+			$pass = $this->config['pass'];
 			try {
-				$this->conn = new \PDO("mysql:host=" . $this->config->dbHost() . ";dbname=" . $this->config->dbName() . ";charset=UTF8", $this->config->dbUser(), $this->config->dbPass());
-				$this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-				$this->conn->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+				$connection = new \PDO("mysql:host=$host;dbname=$db;charset=UTF8", $user, $pass);
+				$connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+				$connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
 
-				return $this->conn;
+				return $connection;
 
 			} catch(\PDOException $e) {
 				Response::error(503, 'Utilgjengelig. Databasekobling kundeliste feilet: ' . $e->getMessage());
