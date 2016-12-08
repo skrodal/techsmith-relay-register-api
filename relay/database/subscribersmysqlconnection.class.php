@@ -62,13 +62,15 @@
 		 *
 		 * @return bool
 		 */
-		public function insertOrg($org) {
+		public function createOrg($org) {
 			$this->conn = $this->getConnection();
 			$table = $this->config['table'];
 
 			try {
 				$stmt = $this->conn->prepare("INSERT INTO $table (org, affiliation_access) VALUES (:org, :affiliation)");
 				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
+				// TODO - FROM POST
+				$affiliation = 'employee';
 				$stmt->bindParam(':affiliation', $affiliation, \PDO::PARAM_STR);
 				return $stmt->execute() > 0 ? true : false;
 			} catch(\PDOException $e) {

@@ -101,6 +101,13 @@
 					Response::result($subscribers->deleteSubscriber($orgId));
 				}, 'Delete an org from the table.'),
 			]);
+
+			$this->altoRouter->addRoutes([
+				array('POST', '/subscribers/[org:orgId]/create/', function ($orgId) {
+					$subscribers = new Subscribers();
+					Response::result($subscribers->addSubscriber($orgId));
+				}, 'Add a new org to the table.'),
+			]);
 		}
 
 		/**

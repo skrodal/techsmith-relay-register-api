@@ -39,6 +39,11 @@
 			return $this->subscribersMySQLConnection->deleteOrg($org);
 		}
 
+		public function addSubscriber($org){
+			// TODO CHECK POST
+			return $this->subscribersMySQLConnection->createOrg($org);
+		}
+
 		/**
 		 * Query table for affiliation access for a given org
 		 *
