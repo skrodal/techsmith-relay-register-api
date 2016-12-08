@@ -12,6 +12,8 @@
 	namespace Relay\Database;
 
 	use Relay\Utils\Response;
+	use PDO;
+	use PDOException;
 
 	class SubscribersMySQLConnection {
 		private $config;
@@ -29,20 +31,20 @@
 
 			try {
 				$response = array();
-				$query    = $this->conn->query($sql, \PDO::FETCH_ASSOC);
+				$query    = $this->conn->query($sql, PDO::FETCH_ASSOC);
 				foreach($query as $row) {
 					$response[] = $row;
 				}
 				$query->closeCursor();
 
 				return $response;
-			} catch(\PDOException $e) {
+			} catch(PDOException $e) {
 				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
 			}
 		}
 
 		/**
-		 * @return null|\PDO
+		 * @return null|PDO
 		 */
 		public function getConnection() {
 			if(!is_null($this->conn)) {
@@ -53,13 +55,13 @@
 			$user = $this->config['user_rw'];
 			$pass = $this->config['pass'];
 			try {
-				$connection = new \PDO("mysql:host=$host;dbname=$db;charset=UTF8", $user, $pass);
-				$connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-				$connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+				$connection = new PDO("mysql:host=$host;dbname=$db;charset=UTF8", $user, $pass);
+				$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
 				return $connection;
 
-			} catch(\PDOException $e) {
+			} catch(PDOException $e) {
 				Response::error(503, 'Utilgjengelig. Databasekobling kundeliste feilet: ' . $e->getMessage());
 			}
 		}
@@ -73,10 +75,10 @@
 			$this->conn = $this->getConnection();
 			try {
 				$stmt = $this->conn->prepare("DELETE FROM $this->table WHERE org = :org");
-				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
+				$stmt->bindParam(':org', $org, PDO::PARAM_STR);
 
 				return $stmt->execute() > 0 ? true : false;
-			} catch(\PDOException $e) {
+			} catch(PDOException $e) {
 				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
 			}
 		}
@@ -90,13 +92,13 @@
 			$this->conn = $this->getConnection();
 			try {
 				$stmt = $this->conn->prepare("INSERT INTO $this->table (org, affiliation_access) VALUES (:org, :affiliation)");
-				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
+				$stmt->bindParam(':org', $org, PDO::PARAM_STR);
 				// TODO - FROM POST
 				$affiliation = 'employee';
-				$stmt->bindParam(':affiliation', $affiliation, \PDO::PARAM_STR);
+				$stmt->bindParam(':affiliation', $affiliation, PDO::PARAM_STR);
 
 				return $stmt->execute() > 0 ? true : false;
-			} catch(\PDOException $e) {
+			} catch(PDOException $e) {
 				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
 			}
 		}
@@ -112,11 +114,11 @@
 			$this->conn = $this->getConnection();
 			try {
 				$stmt = $this->conn->prepare("UPDATE $this->table SET active = :status WHERE org = :org");
-				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
-				$stmt->bindParam(':status', $active_status, \PDO::PARAM_INT);
+				$stmt->bindParam(':org', $org, PDO::PARAM_STR);
+				$stmt->bindParam(':status', $active_status, PDO::PARAM_INT);
 
 				return $stmt->execute() > 0 ? true : false;
-			} catch(\PDOException $e) {
+			} catch(PDOException $e) {
 				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
 			}
 		}
@@ -125,11 +127,11 @@
 			$this->conn = $this->getConnection();
 			try {
 				$stmt = $this->conn->prepare("UPDATE $this->table SET affiliation_access = :affiliation WHERE org = :org");
-				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
-				$stmt->bindParam(':affiliation', $affiliation, \PDO::PARAM_STR);
+				$stmt->bindParam(':org', $org, PDO::PARAM_STR);
+				$stmt->bindParam(':affiliation', $affiliation, PDO::PARAM_STR);
 
 				return $stmt->execute() > 0 ? true : false;
-			} catch(\PDOException $e) {
+			} catch(PDOException $e) {
 				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
 			}
 		}

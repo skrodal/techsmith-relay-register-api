@@ -212,7 +212,7 @@
                 ";
 			// Note: 'FEIDE_USERNAME' is a dummy user that already exists in tblUser
 			// Run & return
-			return $this->relaySQLConnection->query($SQL);
+			return $this->relaySQLConnection->execute($SQL);
 		}
 
 		public function getRelayUserId() {

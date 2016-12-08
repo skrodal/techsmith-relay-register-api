@@ -2,6 +2,8 @@
 	namespace Relay\Database;
 
 	use Relay\Utils\Response;
+	use PDO;
+	use PDOException;
 
 	class RelaySQLConnection {
 
@@ -17,14 +19,24 @@
 
 			try {
 				$response = array();
-				$query    = $this->conn->query($sql, \PDO::FETCH_ASSOC);
+				$query    = $this->conn->query($sql, PDO::FETCH_ASSOC);
 				foreach($query as $row) {
 					$response[] = $row;
 				}
 				$query->closeCursor();
 
 				return $response;
-			} catch(\PDOException $e) {
+			} catch(PDOException $e) {
+				Response::error(500, 'Samtale med database feilet (SQL): ' . $e->getMessage());
+			}
+		}
+
+		public function execute($sql){
+			$this->conn = $this->getConnection();
+
+			try {
+				return $this->conn->exec($sql);
+			} catch(PDOException $e) {
 				Response::error(500, 'Samtale med database feilet (SQL): ' . $e->getMessage());
 			}
 		}
@@ -42,11 +54,11 @@
 			$user = $this->config['user'];
 			$pass = $this->config['pass'];
 			try {
-				$connection = new \PDO("dblib:host=$host;dbname=$db;charset=UTF8", $user, $pass);
-				$connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+				$connection = new PDO("dblib:host=$host;dbname=$db;charset=UTF8", $user, $pass);
+				$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 				return $connection;
-			} catch(\PDOException $e) {
+			} catch(PDOException $e) {
 				Response::error(503, 'Utilgjengelig. Databasekobling Relay feilet: ' . $e->getMessage());
 			}
 		}
