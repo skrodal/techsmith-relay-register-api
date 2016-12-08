@@ -13,52 +13,6 @@
 	 *
 	 */
 
-	/*
-	    The table, which needs to be updated manually when new orgs subscribe to the service, looks like this:
-
-			CREATE TABLE `relay_subscribers` (
-			`org` varchar(30) NOT NULL,
-		    `affiliation_access` varchar(10) NOT NULL,
-		    PRIMARY KEY (`org`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-		...where affiliation_access should be 'employee' or 'member' (for employee and student access).
-
-		Some starter values (orgs found in Kind for the service at the time of writing):
-
-			INSERT INTO `relay_subscribers` (`org`, `affiliation_access`)
-			VALUES
-				('aho.no', 'employee'),
-				('forskningsradet.no', 'member'),
-				('hbv.no', 'member'),
-				('hials.no', 'employee'),
-				('hig.no', 'employee'),
-				('hih.no', 'member'),
-				('hihm.no', 'employee'),
-				('hinesna.no', 'member'),
-				('hioa.no', 'member'),
-				('hiof.no', 'member'),
-				('hit.no', 'employee'),
-				('hivolda.no', 'employee'),
-				('ldh.no', 'employee'),
-				('mf.no', 'employee'),
-				('mhs.no', 'member'),
-				('nhh.no', 'employee'),
-				('nih.no', 'member'),
-				('nmbu.no', 'member'),
-				('ntnu.no', 'employee'),
-				('samiskhs.no', 'employee'),
-				('uia.no', 'member'),
-				('uib.no', 'employee'),
-				('uin.no', 'member'),
-				('uio.no', 'member'),
-				('uit.no', 'member'),
-				('umb.no', 'employee'),
-				('uninett.no', 'employee');
-
-	*/
-
-
 	namespace Relay\Database;
 
 	use Relay\Utils\Response;

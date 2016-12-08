@@ -27,7 +27,6 @@
 			],
 			'auth'       => [
 				'dataporten'        => $configRoot . 'dataporten_config.json',
-				//'dataporten_client' => $configRoot . 'dataporten_client_config.json',
 				'relay_sql'         => $relayConfigPath,
 				'subscribers_mysql' => $configRoot . 'subscribers_mysql_config.json',
 				'mail'              => $configRoot . 'mail_config.json'

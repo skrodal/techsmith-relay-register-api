@@ -27,6 +27,11 @@
 		}
 
 
+		/**
+		 * Check org/user access in MySQL table.
+		 *
+		 * @return bool
+		 */
 		private function verifyOrgSubscription() {
 			// 1. Check if logged on user has status as student | employee
 			//  - Will exit if not
@@ -58,32 +63,11 @@
 					Response::error(403, "Beklager, ditt lærested tilbyr ikke tjenesten for personer med tilhørighet som '" . $this->dataporten->userAffiliation() . "'.");
 					break;
 			}
-			/*
-						// Will exit if not employee | student
-						$this->getRelayProfileIdFromAffiliation();
-						// Call Kind API endpoint to get subscription details
-						$details = $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
-						// Will be false if Kind API did not find a valid subscription
-						if($details['status']) {
-							// A higher code means no active subscription
-							if($details['data']['subscription_code'] <= 20) {
-								// Check if subscription is set for staff and students (affiliation member) in Kind
-								if(strcasecmp('member', trim($details['data']['affiliation_access'])) == 0) {
-									return true;
-								}
-								// ...otherwise check for explicit employee|student match
-								if(strcasecmp($this->dataporten->userAffiliation(), trim($details['data']['affiliation_access'])) == 0) {
-									return true;
-								}
-								// User's affiliation does not have access
-								Response::error(403, "Beklager, ditt lærested tilbyr ikke tjenesten for personer med tilhørighet som '" . $this->dataporten->userAffiliation() . "'.");
-							}
-						}
-						// User's org does not subscribe to the service
-						Response::error(403, "Beklager, ditt lærested abonnerer ikke på tjenesten.");
-			*/
 		}
 
+		/**
+		 * @return int
+		 */
 		public function getRelayProfileIdFromAffiliation() {
 			// Will exit if user affiliation is not found in /groups/me/groups/
 			switch($this->dataporten->userAffiliation()) {
@@ -113,22 +97,6 @@
 
 			return $sqlResponse['versValue'];
 		}
-
-		/*
-		public function getSubscriberDetails() {
-			$details = $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
-			//
-			if($details['status']) {
-				return $details['data'];
-			}
-			Response::error(403, "Fant ikke abonnementsinformasjon for " . $this->dataporten->userOrgId() . " i Kind.");
-		}
-
-		public function kindId() {
-			return $this->config['kindId'];
-		}
-
-		*/
 
 		/**
 		 * /me/create/
