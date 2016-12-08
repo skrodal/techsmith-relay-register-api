@@ -1,0 +1,8 @@
+{
+    "info"                  : "Access credentials to subscribers access table (UNINETT MySQL Cluster) - implemented Dec 2016 to replace KIND v1",
+    "host"                  : "...",
+    "db"                    : "...",
+    "table"                 : "...",
+    "user"                  : "...",
+    "pass"                  : "..."
+}

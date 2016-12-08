@@ -26,10 +26,11 @@
 				'api_base_path' => $apiBasePath
 			],
 			'auth'       => [
-				'dataporten'        => $configRoot . 'dataporten_config.js',
-				'dataporten_client' => $configRoot . 'dataporten_client_config.js',
+				'dataporten'        => $configRoot . 'dataporten_config.json',
+				'dataporten_client' => $configRoot . 'dataporten_client_config.json',
 				'relay_sql'         => $relayConfigPath,
-				'mail'              => $configRoot . 'mail_config.js'
+				'subscribers_mysql' => $configRoot . 'subscribers_mysql_config.json',
+				'mail'              => $configRoot . 'mail_config.json'
 			],
 			'utils'      => [
 				'debug' => $debug

@@ -185,7 +185,7 @@
 		}
 
 		private function sqlCreateUser($accountInsert) {
-			// Actual Insert (TODO: consider utf8_decode...)
+			// Actual Insert
 			$SQL = "
                     INSERT INTO tblUser (
 	                    userName, userDisplayName, userPassword, userEmail, userAccountType, 
