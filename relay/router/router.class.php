@@ -9,6 +9,7 @@
 	namespace Relay\Router;
 
 	use Relay\Api\Relay;
+	use Relay\Api\Subscribers;
 	use Relay\Auth\Dataporten;
 	use Relay\Conf\Config;
 	use Relay\Utils\Response;
@@ -30,6 +31,7 @@
 			// Make all POST routes available
 			$this->declarePostRoutes();
 			if($this->dataporten->isSuperAdmin()) {
+				$this->declareAdminRoutes();
 				$this->declareDevRoutes();
 			}
 			// Activate routes
@@ -76,6 +78,19 @@
 				array('POST', '/relay/me/create/', function () {
 					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->createRelayUser());
+				}, 'Create user account.'),
+			]);
+		}
+
+		/**
+		 * Routes pertaining to CRUD on Subscribers Table (MySQL)
+		 */
+		private function declareAdminRoutes(){
+
+			$this->altoRouter->addRoutes([
+				array('GET', '/subscribers/', function () {
+					$subscribers = new Subscribers();
+					Response::result($subscribers->getSubscribers());
 				}, 'Create user account.'),
 			]);
 		}

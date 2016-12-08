@@ -8,19 +8,18 @@
 	use Relay\Auth\Dataporten;
 	use Relay\Conf\Config;
 	use Relay\Database\RelaySQLConnection;
-	use Relay\Database\SubscribersMySQLConnection;
 	use Relay\Utils\Response;
 	use Relay\Utils\Utils;
 
 	class Relay {
-		private $relaySQLConnection, $subscribersMySQLConnection, $dataporten, $kind, $config;
+		private $relaySQLConnection, $subscribers, $dataporten, $config;
 
 		function __construct(Dataporten $dataPorten) {
 			// Will exit on fail
-			$this->config                     = Config::getConfigFromFile(Config::get('auth')['relay_sql']);
-			$this->relaySQLConnection         = new RelaySQLConnection($this->config);
-			$this->subscribersMySQLConnection = new SubscribersMySQLConnection(Config::getConfigFromFile(Config::get('auth')['subscribers_mysql']));
-			$this->dataporten                 = $dataPorten;
+			$this->config             = Config::getConfigFromFile(Config::get('auth')['relay_sql']);
+			$this->relaySQLConnection = new RelaySQLConnection($this->config);
+			$this->subscribers        = new Subscribers();
+			$this->dataporten         = $dataPorten;
 			// $this->kind                       = new Kind();
 			// Check that org has access (will exit otherwise)
 			$this->verifyOrgSubscription();
@@ -38,7 +37,7 @@
 			$this->getRelayProfileIdFromAffiliation();
 
 			// 2. Check MySQL table for user's home org  affiliation access
-			$access = $this->subscribersMySQLConnection->getOrgAffiliationAccess($this->dataporten->userOrgId());
+			$access = $this->subscribers->getOrgAffiliationAccess($this->dataporten->userOrgId());
 			if(!isset($access[0]['affiliation_access'])) {
 				// User's org does NOT subscribe to the service (not found in table)
 				Response::error(403, "Beklager, ditt lærested ser ikke ut til å abonnere på tjenesten.");
@@ -51,6 +50,7 @@
 					if(strcasecmp($this->dataporten->userAffiliation(), 'employee') !== 0) {
 						Response::error(403, "Beklager, ditt lærested tilbyr ikke tjenesten for personer med tilhørighet som '" . $this->dataporten->userAffiliation() . "'.");
 					}
+
 					// OK
 					return true;
 					break;

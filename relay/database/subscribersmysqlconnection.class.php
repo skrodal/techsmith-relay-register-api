@@ -4,10 +4,6 @@
 	 * given that v.2 will be delayed by ~1 year. This solution ensures that the registration service will continue
 	 * to work when Kind v1 is taken down.
 	 *
-	 * NOTE 1: THIS TABLE IS NOT AUTHORITATIVE!
-	 * NOTE 2: THE TABLE DOES NOT INCLUDE SUBSCRIPTION STATUS. ACCESS TO THE CLIENT MUST BE REGULATED IN DATAPORTEN!
-	 *
-	 *
 	 * @author Simon Skrødal
 	 * @since  08/12/2016
 	 *
@@ -25,17 +21,6 @@
 			$this->config = $config;
 		}
 
-		/**
-		 * Query table for affiliation access for a given org
-		 * @param $org
-		 *
-		 * @return array
-		 */
-		public function getOrgAffiliationAccess($org) {
-			$table = $this->config['table'];
-
-			return $this->query("SELECT affiliation_access FROM $table WHERE org = '$org'");
-		}
 
 		public function query($sql) {
 			$this->conn = $this->getConnection();

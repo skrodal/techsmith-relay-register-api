@@ -1,0 +1,40 @@
+<?php
+	/**
+	 * Created by PhpStorm.
+	 * User: Wintermild
+	 * Date: 08/12/2016
+	 * Time: 14:16
+	 */
+
+	namespace Relay\Api;
+
+
+	use Relay\Database\SubscribersMySQLConnection;
+
+	class Subscribers {
+		private $subscribersMySQLConnection, $config;
+
+		public function __construct() {
+			$this->config                     = Config::getConfigFromFile(Config::get('auth')['subscribers_mysql']);
+			$this->subscribersMySQLConnection = new SubscribersMySQLConnection($this->config);
+		}
+
+		public function getSubscribers(){
+			$table = $this->config['table'];
+
+			return $this->subscribersMySQLConnection->query("SELECT * FROM $table");
+		}
+
+		/**
+		 * Query table for affiliation access for a given org
+		 *
+		 * @param $org
+		 *
+		 * @return array
+		 */
+		public function getOrgAffiliationAccess($org) {
+			$table = $this->config['table'];
+
+			return $this->subscribersMySQLConnection->query("SELECT affiliation_access FROM $table WHERE org = '$org' AND active = 1");
+		}
+	}

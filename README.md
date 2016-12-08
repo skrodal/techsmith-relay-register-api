@@ -25,10 +25,11 @@ from a simple (MySQL) table (currently hosted on UNINETTs MySQL Cluster).
 To reproduce this table, which needs to be updated manually when new orgs subscribe to the service;
    
 ```sql
-    CREATE TABLE `relay_subscribers` (
-    `org` varchar(30) NOT NULL,
-    `affiliation_access` varchar(10) NOT NULL,
-    PRIMARY KEY (`org`)
+    CREATE TABLE relay_subscribers (
+    org varchar(30) NOT NULL,
+    affiliation_access varchar(10) NOT NULL,
+    active TINYINT(1) NOT NULL DEFAULT 1,
+    PRIMARY KEY (org)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
    	
@@ -37,35 +38,35 @@ To reproduce this table, which needs to be updated manually when new orgs subscr
 Some starter values (orgs found in Kind for the service at the time of writing):
    
 ```sql
-    INSERT INTO `relay_subscribers` (`org`, `affiliation_access`)
+INSERT INTO relay_subscribers (org, affiliation_access, active)
     VALUES
-        ('aho.no', 'employee'),
-        ('forskningsradet.no', 'member'),
-        ('hbv.no', 'member'),
-        ('hials.no', 'employee'),
-        ('hig.no', 'employee'),
-        ('hih.no', 'member'),
-        ('hihm.no', 'employee'),
-        ('hinesna.no', 'member'),
-        ('hioa.no', 'member'),
-        ('hiof.no', 'member'),
-        ('hit.no', 'employee'),
-        ('hivolda.no', 'employee'),
-        ('ldh.no', 'employee'),
-        ('mf.no', 'employee'),
-        ('mhs.no', 'member'),
-        ('nhh.no', 'employee'),
-        ('nih.no', 'member'),
-        ('nmbu.no', 'member'),
-        ('ntnu.no', 'employee'),
-        ('samiskhs.no', 'employee'),
-        ('uia.no', 'member'),
-        ('uib.no', 'employee'),
-        ('uin.no', 'member'),
-        ('uio.no', 'member'),
-        ('uit.no', 'member'),
-        ('umb.no', 'employee'),
-        ('uninett.no', 'employee');
+        ("aho.no", "employee", 1),
+        ('forskningsradet.no', 'member', 1),
+        ('hbv.no', 'member', 1),
+        ('hials.no', 'employee', 1),
+        ('hig.no', 'employee', 0),
+        ('hih.no', 'member', 0),
+        ('hihm.no', 'employee', 1),
+        ('hinesna.no', 'member', 0),
+        ('hioa.no', 'member', 1),
+        ('hiof.no', 'member', 1),
+        ('hit.no', 'employee', 0),
+        ('hivolda.no', 'employee', 1),
+        ('ldh.no', 'employee', 1),
+        ('mf.no', 'employee', 1),
+        ('mhs.no', 'member', 1),
+        ('nhh.no', 'employee', 0),
+        ('nih.no', 'member', 1),
+        ('nmbu.no', 'member', 1),
+        ('ntnu.no', 'employee', 1),
+        ('samiskhs.no', 'employee', 1),
+        ('uia.no', 'member', 1),
+        ('uib.no', 'employee', 1),
+        ('uin.no', 'member', 0),
+        ('uio.no', 'member', 1),
+        ('uit.no', 'member', 1),
+        ('umb.no', 'employee', 0),
+        ('uninett.no', 'employee', 1);
 ```
 
 
