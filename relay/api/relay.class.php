@@ -21,7 +21,7 @@
 			$this->relaySQLConnection         = new RelaySQLConnection($this->config);
 			$this->subscribersMySQLConnection = new SubscribersMySQLConnection(Config::getConfigFromFile(Config::get('auth')['subscribers_mysql']));
 			$this->dataporten                 = $dataPorten;
-			$this->kind                       = new Kind();
+			// $this->kind                       = new Kind();
 			// Check that org has access (will exit otherwise)
 			$this->verifyOrgSubscription();
 		}
@@ -114,6 +114,7 @@
 			return $sqlResponse['versValue'];
 		}
 
+		/*
 		public function getSubscriberDetails() {
 			$details = $this->kind->orgSubscriberDetails($this->kindId(), $this->dataporten->userOrgId());
 			//
@@ -126,6 +127,8 @@
 		public function kindId() {
 			return $this->config['kindId'];
 		}
+
+		*/
 
 		/**
 		 * /me/create/

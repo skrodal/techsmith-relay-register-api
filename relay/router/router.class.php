@@ -59,10 +59,12 @@
 					Response::result($this->relay->getRelayUser());
 				}, 'User account details..'),
 				// FROM KIND
+				/*
 				array('GET', '/relay/org/subscription/', function () {
 					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->getSubscriberDetails());
 				}, 'Get subscription details for logged on users org.'),
+				*/
 				// WHICH DB ARE WE READING FROM/WRITING TO?
 				array('GET', '/service/testmode/', function () {
 					Response::result(Config::get('settings')['dev_mode']);
