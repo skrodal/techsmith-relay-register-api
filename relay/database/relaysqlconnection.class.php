@@ -36,7 +36,7 @@
 			try {
 				return $this->conn->exec($sql);
 			} catch(PDOException $e) {
-				Response::error(500, 'Samtale med database feilet (SQL): ' . $e->getMessage() . '(' . $e->getTraceAsString() . ')');
+				Response::error(500, 'Samtale med database feilet (SQL): ' . $e->getMessage());
 			}
 		}
 
@@ -47,10 +47,10 @@
 			if(!is_null($this->conn)) {
 				return $this->conn;
 			}
-			// Read only access
+			// RW Access (for insert).
 			$host = $this->config['host'];
 			$db   = $this->config['db'];
-			$user = $this->config['user'];
+			$user = $this->config['user_write'];
 			$pass = $this->config['pass'];
 			try {
 				$connection = new PDO("dblib:host=$host;dbname=$db;charset=UTF8", $user, $pass);

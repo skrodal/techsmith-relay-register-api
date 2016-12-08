@@ -50,6 +50,7 @@
 			if(!is_null($this->conn)) {
 				return $this->conn;
 			}
+			// RW (for CRUD on table by SuperAdmins)
 			$host = $this->config['host'];
 			$db   = $this->config['db'];
 			$user = $this->config['user_rw'];
