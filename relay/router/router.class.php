@@ -24,6 +24,7 @@
 			### ALTO ROUTER
 			$this->altoRouter = new AltoRouter();
 			$this->altoRouter->setBasePath(Config::get('altoRouter')['api_base_path']);
+			$this->altoRouter->addMatchTypes(array('user' => '[0-9A-Za-z.@]++', 'org' => '[0-9A-Za-z.]++'));
 			### DATAPORTEN
 			$this->dataporten = new Dataporten();
 			// Make all GET routes available
@@ -78,7 +79,7 @@
 				array('POST', '/relay/me/create/', function () {
 					$this->relay = new Relay($this->dataporten);
 					Response::result($this->relay->createRelayUser());
-				}, 'Get all orgs in subscribers table (active and inactive).'),
+				}, 'Create user account.'),
 			]);
 		}
 
@@ -91,7 +92,14 @@
 				array('GET', '/subscribers/', function () {
 					$subscribers = new Subscribers();
 					Response::result($subscribers->getSubscribers());
-				}, 'Create user account.'),
+				}, 'Get all orgs in subscribers table (active and inactive).'),
+			]);
+
+			$this->altoRouter->addRoutes([
+				array('DELETE', '/subscribers/[org:orgId]/delete/', function ($orgId) {
+					$subscribers = new Subscribers();
+					Response::result($subscribers->deleteSubscriber($orgId));
+				}, 'Delete an org from the table.'),
 			]);
 		}
 
