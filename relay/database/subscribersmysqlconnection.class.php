@@ -15,10 +15,12 @@
 
 	class SubscribersMySQLConnection {
 		private $config;
+		private $table;
 		private $conn = NULL;
 
 		function __construct($config) {
 			$this->config = $config;
+			$this->table  = $this->config['table'];
 		}
 
 
@@ -40,44 +42,8 @@
 		}
 
 		/**
-		 * @param $org
-		 *
-		 * @return bool
+		 * @return null|\PDO
 		 */
-		public function deleteOrg($org) {
-			$this->conn = $this->getConnection();
-			$table = $this->config['table'];
-
-			try {
-				$stmt = $this->conn->prepare("DELETE FROM $table WHERE org = :org");
-				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
-				return $stmt->execute() > 0 ? true : false;
-			} catch(\PDOException $e) {
-				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
-			}
-		}
-
-		/**
-		 * @param $org
-		 *
-		 * @return bool
-		 */
-		public function createOrg($org) {
-			$this->conn = $this->getConnection();
-			$table = $this->config['table'];
-
-			try {
-				$stmt = $this->conn->prepare("INSERT INTO $table (org, affiliation_access) VALUES (:org, :affiliation)");
-				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
-				// TODO - FROM POST
-				$affiliation = 'employee';
-				$stmt->bindParam(':affiliation', $affiliation, \PDO::PARAM_STR);
-				return $stmt->execute() > 0 ? true : false;
-			} catch(\PDOException $e) {
-				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
-			}
-		}
-
 		public function getConnection() {
 			if(!is_null($this->conn)) {
 				return $this->conn;
@@ -95,6 +61,76 @@
 
 			} catch(\PDOException $e) {
 				Response::error(503, 'Utilgjengelig. Databasekobling kundeliste feilet: ' . $e->getMessage());
+			}
+		}
+
+		/**
+		 * @param $org
+		 *
+		 * @return bool
+		 */
+		public function deleteOrg($org) {
+			$this->conn = $this->getConnection();
+			try {
+				$stmt = $this->conn->prepare("DELETE FROM $this->table WHERE org = :org");
+				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
+
+				return $stmt->execute() > 0 ? true : false;
+			} catch(\PDOException $e) {
+				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
+			}
+		}
+
+		/**
+		 * @param $org
+		 *
+		 * @return bool
+		 */
+		public function createOrg($org) {
+			$this->conn = $this->getConnection();
+			try {
+				$stmt = $this->conn->prepare("INSERT INTO $this->table (org, affiliation_access) VALUES (:org, :affiliation)");
+				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
+				// TODO - FROM POST
+				$affiliation = 'employee';
+				$stmt->bindParam(':affiliation', $affiliation, \PDO::PARAM_STR);
+
+				return $stmt->execute() > 0 ? true : false;
+			} catch(\PDOException $e) {
+				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
+			}
+		}
+
+		/**
+		 * Change affiliation and/or active flag
+		 *
+		 * @param $org
+		 *
+		 * @return bool
+		 */
+		public function updateOrgStatus($org, $active_status) {
+			$this->conn = $this->getConnection();
+			try {
+				$stmt = $this->conn->prepare("UPDATE $this->table SET active = :status WHERE org = :org");
+				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
+				$stmt->bindParam(':status', $active_status, \PDO::PARAM_INT);
+
+				return $stmt->execute() > 0 ? true : false;
+			} catch(\PDOException $e) {
+				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
+			}
+		}
+
+		public function updateOrgAffiliationAccess($org, $affiliation) {
+			$this->conn = $this->getConnection();
+			try {
+				$stmt = $this->conn->prepare("UPDATE $this->table SET affiliation_access = :affiliation WHERE org = :org");
+				$stmt->bindParam(':org', $org, \PDO::PARAM_STR);
+				$stmt->bindParam(':affiliation', $affiliation, \PDO::PARAM_STR);
+
+				return $stmt->execute() > 0 ? true : false;
+			} catch(\PDOException $e) {
+				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
 			}
 		}
 	}

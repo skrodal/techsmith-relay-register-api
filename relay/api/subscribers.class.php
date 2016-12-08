@@ -35,13 +35,20 @@
 		 *
 		 * @return bool
 		 */
-		public function deleteSubscriber($org){
+		public function deleteSubscriber($org) {
 			return $this->subscribersMySQLConnection->deleteOrg($org);
 		}
 
-		public function addSubscriber($org){
-			// TODO CHECK POST
+		public function addSubscriber($org) {
 			return $this->subscribersMySQLConnection->createOrg($org);
+		}
+
+		public function updateSubscriberStatus($org, $active_status) {
+			return $this->subscribersMySQLConnection->updateOrgStatus($org, $active_status);
+		}
+
+		public function updateOrgAffiliationAccess($org, $affiliation){
+			return $this->subscribersMySQLConnection->updateOrgAffiliationAccess($org, $affiliation);
 		}
 
 		/**

@@ -24,13 +24,15 @@
 			### ALTO ROUTER
 			$this->altoRouter = new AltoRouter();
 			$this->altoRouter->setBasePath(Config::get('altoRouter')['api_base_path']);
-			$this->altoRouter->addMatchTypes(array('user' => '[0-9A-Za-z.@]++', 'org' => '[0-9A-Za-z.]++'));
+			//$this->altoRouter->addMatchTypes(array('user' => '[0-9A-Za-z.@]++', 'org' => '[0-9A-Za-z.]++'));
+			$this->altoRouter->addMatchTypes(array('org' => '[0-9A-Za-z.]++'));
 			### DATAPORTEN
 			$this->dataporten = new Dataporten();
 			// Make all GET routes available
 			$this->declareGetRoutes();
 			// Make all POST routes available
 			$this->declarePostRoutes();
+			// Routes pertaining to CRUD on Subscribers table and DEV routes
 			if($this->dataporten->isSuperAdmin()) {
 				$this->declareAdminRoutes();
 				$this->declareDevRoutes();
@@ -88,6 +90,7 @@
 		 */
 		private function declareAdminRoutes(){
 
+			// List all orgs in table
 			$this->altoRouter->addRoutes([
 				array('GET', '/subscribers/', function () {
 					$subscribers = new Subscribers();
@@ -95,6 +98,7 @@
 				}, 'Get all orgs in subscribers table (active and inactive).'),
 			]);
 
+			// Delete an org
 			$this->altoRouter->addRoutes([
 				array('DELETE', '/subscribers/[org:orgId]/delete/', function ($orgId) {
 					$subscribers = new Subscribers();
@@ -102,12 +106,32 @@
 				}, 'Delete an org from the table.'),
 			]);
 
+			// Add an org
 			$this->altoRouter->addRoutes([
-				array('POST', '/subscribers/[org:orgId]/create/', function ($orgId) {
+				// $affiliation will only match 'employee' or 'member'
+				array('POST', '/subscribers/[org:orgId]/create/affiliation/[employee|member:affiliation]', function ($orgId, $affiliation) {
 					$subscribers = new Subscribers();
 					Response::result($subscribers->addSubscriber($orgId));
 				}, 'Add a new org to the table.'),
 			]);
+
+			// Add an org
+			$this->altoRouter->addRoutes([
+				// $affiliation will only match 'employee' or 'member'
+				array('PATCH', '/subscribers/[org:orgId]/update/affiliation/[employee|member:affiliation]', function ($orgId, $affiliation) {
+					$subscribers = new Subscribers();
+					Response::result($subscribers->updateSubscriberAffiliation($orgId, $affiliation));
+				}, 'Update an orgs affiliation access.'),
+			]);
+
+			// Update an org
+			$this->altoRouter->addRoutes([
+				array('PATCH', '/subscribers/[org:orgId]/update/active/[0|1:active_status]/', function ($orgId, $active_status) {
+					$subscribers = new Subscribers();
+					Response::result($subscribers->updateSubscriberStatus($orgId, $active_status));
+				}, 'Update an orgs active status.'),
+			]);
+
 		}
 
 		/**
