@@ -46,7 +46,6 @@
 					if(strcasecmp($this->dataporten->userAffiliation(), 'employee') !== 0) {
 						Response::error(403, "Beklager, ditt lærested tilbyr ikke tjenesten for personer med tilhørighet som '" . $this->dataporten->userAffiliation() . "'.");
 					}
-
 					// OK
 					return true;
 					break;
