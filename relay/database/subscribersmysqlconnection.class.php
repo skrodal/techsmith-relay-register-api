@@ -9,7 +9,7 @@
 	 *
 	 *
 	 * @author Simon Skrødal
-	 * @since 08/12/2016
+	 * @since  08/12/2016
 	 *
 	 */
 
@@ -61,12 +61,20 @@
 
 	namespace RelayRegister\database;
 
+	use Relay\Utils\Response;
+
 	class SubscribersMySQLConnection {
 		private $config;
 		private $conn = NULL;
 
 		function __construct($config) {
 			$this->config = $config;
+		}
+
+		public function getOrgAffiliationAccess($org) {
+			$table = $this->config['table'];
+
+			return $this->query("SELECT affiliation_access FROM $table WHERE org = $org");
 		}
 
 		public function query($sql) {
@@ -84,11 +92,6 @@
 			} catch(\PDOException $e) {
 				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
 			}
-		}
-
-		public function getOrgAffiliationAccess($org){
-			$table = $this->config['table'];
-			return $this->query("SELECT affiliation_access FROM $table WHERE org = $org");
 		}
 
 		public function getConnection() {
