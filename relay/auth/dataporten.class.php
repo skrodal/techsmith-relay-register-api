@@ -90,7 +90,6 @@
 		}
 
 		public function userAffiliation() {
-			return 'BabaBABa';
 			$affiliation = null;
 			foreach($this->userGroups as $group){
 				if($group['type'] === 'fc:org') {

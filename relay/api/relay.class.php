@@ -32,7 +32,7 @@
 			//  - Will exit if not
 			$this->getRelayProfileIdFromAffiliation();
 
-			// 2. Check MySQL table for user's home org and affiliation access
+			// 2. Check MySQL table for user's home org  affiliation access
 			$access = $this->subscribersMySQLConnection->getOrgAffiliationAccess($this->dataporten->userOrgId());
 			if(!isset($access[0]['affiliation_access'])) {
 				// User's org does NOT subscribe to the service (not found in table)
