@@ -45,7 +45,7 @@
 			$pass = $this->config['pass'];
 			try {
 				$connection = new \PDO("dblib:host=$host;dbname=$db;charset=UTF8", $user, $pass);
-				$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 				return $connection;
 			} catch(\PDOException $e) {
