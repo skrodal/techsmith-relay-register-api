@@ -8,7 +8,7 @@
 	use Relay\Auth\Dataporten;
 	use Relay\Conf\Config;
 	use Relay\Database\RelaySQLConnection;
-	use RelayRegister\Database\SubscribersMySQLConnection;
+	use Relay\Database\SubscribersMySQLConnection;
 	use Relay\Utils\Response;
 	use Relay\Utils\Utils;
 
