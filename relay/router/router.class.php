@@ -100,7 +100,7 @@
 
 			// Delete an org
 			$this->altoRouter->addRoutes([
-				array('DELETE', '/subscribers/[org:orgId]/delete/', function ($orgId) {
+				array('DELETE', '/subscribers/delete/[org:orgId]/', function ($orgId) {
 					$subscribers = new Subscribers();
 					Response::result($subscribers->deleteSubscriber($orgId));
 				}, 'Delete an org from the table.'),
@@ -109,16 +109,16 @@
 			// Add an org
 			$this->altoRouter->addRoutes([
 				// $affiliation will only match 'employee' or 'member'
-				array('POST', '/subscribers/[org:orgId]/create/affiliation/[employee|member:affiliation]', function ($orgId, $affiliation) {
+				array('POST', '/subscribers/create/[org:orgId]/affiliation/[employee|member:affiliation]/', function ($orgId, $affiliation) {
 					$subscribers = new Subscribers();
-					Response::result($subscribers->addSubscriber($orgId));
+					Response::result($subscribers->addSubscriber($orgId, $affiliation));
 				}, 'Add a new org to the table.'),
 			]);
 
 			// Add an org
 			$this->altoRouter->addRoutes([
 				// $affiliation will only match 'employee' or 'member'
-				array('PATCH', '/subscribers/[org:orgId]/update/affiliation/[employee|member:affiliation]', function ($orgId, $affiliation) {
+				array('PATCH', '/subscribers/update/[org:orgId]/affiliation/[employee|member:affiliation]/', function ($orgId, $affiliation) {
 					$subscribers = new Subscribers();
 					Response::result($subscribers->updateSubscriberAffiliation($orgId, $affiliation));
 				}, 'Update an orgs affiliation access.'),
@@ -126,7 +126,7 @@
 
 			// Update an org
 			$this->altoRouter->addRoutes([
-				array('PATCH', '/subscribers/[org:orgId]/update/active/[0|1:active_status]/', function ($orgId, $active_status) {
+				array('PATCH', '/subscribers/update/[org:orgId]/active/[0|1:active_status]/', function ($orgId, $active_status) {
 					$subscribers = new Subscribers();
 					Response::result($subscribers->updateSubscriberStatus($orgId, $active_status));
 				}, 'Update an orgs active status.'),
