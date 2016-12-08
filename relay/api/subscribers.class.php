@@ -9,6 +9,7 @@
 	namespace Relay\Api;
 
 
+	use Relay\Conf\Config;
 	use Relay\Database\SubscribersMySQLConnection;
 
 	class Subscribers {
@@ -19,7 +20,7 @@
 			$this->subscribersMySQLConnection = new SubscribersMySQLConnection($this->config);
 		}
 
-		public function getSubscribers(){
+		public function getSubscribers() {
 			$table = $this->config['table'];
 
 			return $this->subscribersMySQLConnection->query("SELECT * FROM $table");
