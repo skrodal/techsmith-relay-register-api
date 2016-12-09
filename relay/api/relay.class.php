@@ -310,8 +310,12 @@
 				WHERE tblUser.userId = tblUserProfile.usprUser_userId
 				AND userName = '" . $this->dataporten->userName() . "'");
 
-			// Convert affiliation code to text
+
 			if(!empty($sqlResponse)) {
+				// Add API role
+				$sqlResponse[0]['isSuperAdmin'] = $this->dataporten->isSuperAdmin();
+
+				// Convert affiliation code from query to text
 				switch($sqlResponse[0]['userAffiliation']) {
 					case $this->employeeProfileId():
 						$sqlResponse[0]['userAffiliation'] = 'employee';
