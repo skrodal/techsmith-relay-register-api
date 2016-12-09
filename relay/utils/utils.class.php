@@ -59,7 +59,7 @@
                             <p><strong>Support:</strong></p>
 
                             <p>
-                                Du finner brukerveiledning for TechSmith Relay p&aring; <a href='https://support.ecampus.no/techsmithrelay/'>support.ecampus.no</a>. 
+                                Du finner brukerveiledning for TechSmith Relay p&aring; <a href='https://www.uninett.no/selvhjelp'>uninett.no/selvhjelp</a>. 
                                 Trenger du mer hjelp tar du kontakt med brukerst&oslash;tte ved ditt l&aelig;rested.
                             </p>
 

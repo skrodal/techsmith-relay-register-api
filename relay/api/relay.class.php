@@ -32,35 +32,32 @@
 		 * @return bool
 		 */
 		private function verifyOrgSubscription() {
-			// 1. Check if logged on user has status as student | employee
-			//  - Will exit if not
+			// 1. Check if logged on user has status as student | employee - will exit if not
 			$this->getRelayProfileIdFromAffiliation();
-
-			// 2. Check MySQL table for user's home org  affiliation access
-			$access = $this->subscribers->getOrgAffiliationAccess($this->dataporten->userOrgId());
-			if(!isset($access[0]['affiliation_access'])) {
-				// User's org does NOT subscribe to the service (not found in table)
+			// 2. Check MySQL table for user's home org affiliation access ('member' or 'employee')
+			$orgAffiliationAccess = $this->subscribers->getOrgAffiliationAccess($this->dataporten->userOrgId());
+			// User's org does NOT subscribe to the service (not found in table)
+			if(!isset($orgAffiliationAccess[0]['affiliation_access'])) {
 				Response::error(403, "Beklager, ditt lærested ser ikke ut til å abonnere på tjenesten.");
 			}
-			// 3. Check if home org allows user's affiliation access
-			switch(trim(strtolower($access[0]['affiliation_access']))) {
+			// 3. Check if home org allows user's affiliation access (Dataporten: primaryAffiliation, from Feide's eduPersonPrimaryAffiliation)
+			switch(trim(strtolower($orgAffiliationAccess[0]['affiliation_access']))) {
+				// If org only allows employees:
 				case 'employee':
-					// Org only allows employees
-					// Check that user's affiliation is employee
+					// Check that user's primaryAffiliation is employee
 					if(strcasecmp($this->dataporten->userAffiliation(), 'employee') !== 0) {
 						Response::error(403, "Beklager, ditt lærested tilbyr ikke tjenesten for personer med tilhørighet som '" . $this->dataporten->userAffiliation() . "'.");
 					}
-
-					// OK
+					// OK, user is 'employee'
 					return true;
-					break;
+				// Member == employees AND students have access.
 				case 'member':
-					// Member == employees AND students have access
+					// OK, user is either 'student' or 'employee' (we already checked for 'employee'/'student' status at the start of the function)
 					return true;
-					break;
 				default:
-					// User's affiliation does not have access
-					Response::error(403, "Beklager, ditt lærested tilbyr ikke tjenesten for personer med tilhørighet som '" . $this->dataporten->userAffiliation() . "'.");
+					// For some reason, the subscribers table has something other than 'employee'/'member' recorded for this org
+					// ->> This is WRONG (i.e. someone has entered incorrect data into the access table)
+					Response::error(403, "Registrert tilgang for " . $this->dataporten->userOrgId() . " er satt til '" . $orgAffiliationAccess[0]['affiliation_access'] . "', mens din tilhørighet er ('" . $this->dataporten->userAffiliation() . "'). Her er det nok registrert feil i våre systemer. Fint om du varsler UNINETT om dette.");
 					break;
 			}
 		}
