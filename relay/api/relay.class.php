@@ -74,7 +74,7 @@
 					return $this->employeeProfileId();
 				default:
 					// Exit with error if no student/employee affiliation
-					Response::error(403, "Du må ha tilhørighet som student eller ansatt, men jeg fant ingen av delene: " . $this->dataporten->userAffiliation());
+					Response::error(403, "Du må ha tilhørighet som 'student' eller 'ansatt' ('employee'), men jeg fant ingen av delene: " . $this->dataporten->userAffiliation());
 			}
 		}
 
