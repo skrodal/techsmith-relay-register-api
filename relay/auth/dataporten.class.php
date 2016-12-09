@@ -89,8 +89,11 @@
 			return $data;
 		}
 
+		/**
+		 * What we want here is 'student' or 'employee'.
+		 * @return string
+		 */
 		public function userAffiliation() {
-			return 'studentA';
 			$affiliation = null;
 			foreach($this->userGroups as $group){
 				if($group['type'] === 'fc:org') {

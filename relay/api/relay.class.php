@@ -20,14 +20,13 @@
 			$this->relaySQLConnection = new RelaySQLConnection($this->config);
 			$this->subscribers        = new Subscribers();
 			$this->dataporten         = $dataPorten;
-			// $this->kind                       = new Kind();
 			// Check that org has access (will exit otherwise)
 			$this->verifyOrgSubscription();
 		}
 
 
 		/**
-		 * Check org/user access in MySQL table.
+		 * Check org/user access in MySQL subscribers table.
 		 *
 		 * @return bool
 		 */
@@ -78,16 +77,25 @@
 			}
 		}
 
+		/**
+		 * Relay's ID for the student profile
+		 * @return int
+		 */
 		public function studentProfileId() {
 			return (int)$this->config['studentProfileId'];
 		}
 
+		/**
+		 * Relay's ID for the employee profile
+		 * @return int
+		 */
 		public function employeeProfileId() {
 			return (int)$this->config['employeeProfileId'];
 		}
 
 		/**
 		 * /relay/version/
+		 * @return mixed
 		 */
 		public function getRelayVersion() {
 			$sqlResponse = $this->relaySQLConnection->query("SELECT versValue FROM tblVersion")[0];
@@ -97,6 +105,7 @@
 
 		/**
 		 * /me/create/
+		 * @return array
 		 */
 		public function createRelayUser() {
 			// Only create if user does not already exist
@@ -147,7 +156,6 @@
 					// it was not caught earlier in one of the registration queries.. Should never happen, but here goes:
 					Response::error(500, "En ukjent feil oppstod i registrering av din konto (createRelayUser).");
 				}
-
 			} else {
 				// User exists already
 				Response::error(403, "Konto med brukernavn '" . $this->dataporten->userName() . "' eksisterer allerede.");
@@ -156,6 +164,8 @@
 
 		/**
 		 * Query for ID to check if user exists.
+		 *
+		 * @return bool
 		 */
 		public function getRelayAccountExists() {
 			$sqlResponse = $this->relaySQLConnection->query("
@@ -167,16 +177,30 @@
 			return !empty($sqlResponse);
 		}
 
+		/**
+		 * @param $length
+		 *
+		 * @return string
+		 */
 		private function generatePassword($length) {
 			$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 			return substr(str_shuffle($chars), 0, $length);
 		}
 
+		/**
+		 * @return string
+		 */
 		private function generateSalt() {
 			return md5(uniqid(mt_rand(), true));
 		}
 
+		/**
+		 * @param $password
+		 * @param $salt
+		 *
+		 * @return string
+		 */
 		private function hashPassword($password, $salt) {
 			$hashedPassword         = hash('sha384', $password . $salt);
 			$TIMES_TO_HASH_PASSWORD = 2;
@@ -187,6 +211,14 @@
 			return $hashedPassword;
 		}
 
+		/**
+		 * Create a new user, where 'FEIDE_USERNAME' is a dummy account used as a blueprint for
+		 * the new account.
+		 *
+		 * @param $accountInsert
+		 *
+		 * @return int
+		 */
 		private function sqlCreateUser($accountInsert) {
 			// Actual Insert
 			$SQL = "
@@ -212,6 +244,10 @@
 			return $this->relaySQLConnection->execute($SQL);
 		}
 
+		/**
+		 * Get a user ID from userName.
+		 * @return int|null
+		 */
 		public function getRelayUserId() {
 			$sqlResponse = $this->relaySQLConnection->query("
 				SELECT userId 
@@ -223,6 +259,14 @@
 		}
 
 
+		/**
+		 * Assign a profile to the newly created user. Either student or employee.
+		 *
+		 * @param $userId
+		 * @param $profileID
+		 *
+		 * @return array
+		 */
 		private function sqlAddUserProfile($userId, $profileID) {
 			$SQL = "INSERT INTO tblUserProfile (
 					usprUser_userId, usprProfile_profId, usprAddedViaGroup, createdOn, createdByUser, 
@@ -234,8 +278,15 @@
 			return $this->relaySQLConnection->query($SQL);
 		}
 
+		/**
+		 * Assign newly created user with a role.
+		 * Presenter role == 3 which is the role all users get by default.
+		 *
+		 * @param $userId
+		 *
+		 * @return array
+		 */
 		private function sqlAddUserRole($userId) {
-			// Presenter role == 3 which is the role all users get by default.
 			$SQL = "INSERT INTO tblRoleMembership (
 					rmUser_userId, rmRole_RoleId, createdOn, createdByUser, modifiedOn, modifiedByUser, modifiedByModule, modificationCount) 
 					VALUES ($userId, 3, GETDATE(), 'registration_script', GETDATE(), 'registration_script', 'Original Record', 0);";
@@ -244,8 +295,13 @@
 			return $this->relaySQLConnection->query($SQL);
 		}
 
+
 		/**
 		 * /me/
+		 *
+		 * Get account info from userName
+		 *
+		 * @return bool
 		 */
 		public function getRelayUser() {
 			$sqlResponse = $this->relaySQLConnection->query("
