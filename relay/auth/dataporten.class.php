@@ -90,7 +90,7 @@
 		}
 
 		public function userAffiliation() {
-			return 'student';
+			return 'studentA';
 			$affiliation = null;
 			foreach($this->userGroups as $group){
 				if($group['type'] === 'fc:org') {
