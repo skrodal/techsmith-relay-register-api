@@ -127,7 +127,7 @@
 
 		public function updateOrgAffiliationAccess($org, $affiliation) {
 			// MUST be member or employee
-			if(strcasecmp($affiliation, 'employee' !== 0 && strcasecmp($affiliation, 'member') !== 0)){
+			if(strcasecmp($affiliation, 'employee') !== 0 && strcasecmp($affiliation, 'member') !== 0){
 			   Response::error(400, "Fikk ikke satt tilgang til $affiliation. Tilgang MÅ være 'employee' eller 'member'.");
 			}
 
