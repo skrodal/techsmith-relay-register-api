@@ -115,18 +115,18 @@
 				}, 'Add a new org to the table.'),
 			]);
 
-			// Add an org
+			// Update affiliation
 			$this->altoRouter->addRoutes([
 				// $affiliation will only match 'employee' or 'member'
-				array('PATCH', '/subscribers/update/[org:orgId]/affiliation/[employee|member:affiliation]/', function ($orgId, $affiliation) {
+				array('POST', '/subscribers/update/[org:orgId]/affiliation/[employee|member:affiliation]/', function ($orgId, $affiliation) {
 					$subscribers = new Subscribers();
 					Response::result($subscribers->updateSubscriberAffiliation($orgId, $affiliation));
 				}, 'Update an orgs affiliation access.'),
 			]);
 
-			// Update an org
+			// Activate/deactivate subscription
 			$this->altoRouter->addRoutes([
-				array('PATCH', '/subscribers/update/[org:orgId]/active/[0|1:active_status]/', function ($orgId, $active_status) {
+				array('POST', '/subscribers/update/[org:orgId]/active/[0|1:active_status]/', function ($orgId, $active_status) {
 					$subscribers = new Subscribers();
 					Response::result($subscribers->updateSubscriberStatus($orgId, $active_status));
 				}, 'Update an orgs active status.'),
