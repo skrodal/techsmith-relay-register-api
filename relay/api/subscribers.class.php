@@ -44,11 +44,11 @@
 		}
 
 		public function updateSubscriberStatus($org, $active_status) {
-			return $this->subscribersMySQLConnection->updateOrgStatus($org, $active_status);
+			return $this->subscribersMySQLConnection->updateOrgStatus(trim(strtolower($org)), (int)$active_status);
 		}
 
-		public function updateOrgAffiliationAccess($org, $affiliation){
-			return $this->subscribersMySQLConnection->updateOrgAffiliationAccess($org, $affiliation);
+		public function updateSubscriberAffiliationAccess($org, $affiliation){
+			return $this->subscribersMySQLConnection->updateOrgAffiliationAccess(trim(strtolower($org)), trim(strtolower($affiliation)));
 		}
 
 		/**

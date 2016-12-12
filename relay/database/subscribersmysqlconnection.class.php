@@ -14,6 +14,7 @@
 	use Relay\Utils\Response;
 	use PDO;
 	use PDOException;
+	use Relay\Utils\Utils;
 
 	class SubscribersMySQLConnection {
 		private $config;
@@ -125,6 +126,11 @@
 		}
 
 		public function updateOrgAffiliationAccess($org, $affiliation) {
+			// MUST be member or employee
+			if(strcasecmp($affiliation, 'employee' !== 0 && strcasecmp($affiliation, 'member') !== 0)){
+			   Response::error(400, "Fikk ikke satt tilgang til $affiliation. Tilgang MÅ være 'employee' eller 'member'.");
+			}
+
 			$this->conn = $this->getConnection();
 			try {
 				$stmt = $this->conn->prepare("UPDATE $this->table SET affiliation_access = :affiliation WHERE org = :org");

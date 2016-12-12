@@ -120,7 +120,7 @@
 				// $affiliation will only match 'employee' or 'member'
 				array('POST', '/subscribers/update/[org:orgId]/affiliation/[employee|member:affiliation]/', function ($orgId, $affiliation) {
 					$subscribers = new Subscribers();
-					Response::result($subscribers->updateSubscriberAffiliation($orgId, $affiliation));
+					Response::result($subscribers->updateSubscriberAffiliationAccess($orgId, $affiliation));
 				}, 'Update an orgs affiliation access.'),
 			]);
 
