@@ -99,7 +99,6 @@
 				$stmt = $this->conn->prepare("INSERT INTO $this->table (org, affiliation_access) VALUES (:org, :affiliation)");
 				$stmt->bindParam(':org', $org, PDO::PARAM_STR);
 				$stmt->bindParam(':affiliation', $affiliation, PDO::PARAM_STR);
-				error_log('3: ' . $affiliation . PHP_EOL);
 				return $stmt->execute() > 0 ? true : false;
 			} catch(PDOException $e) {
 				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());

@@ -40,7 +40,6 @@
 		}
 
 		public function addSubscriber($org, $affiliation) {
-			error_log('2: ' . $affiliation . PHP_EOL);
 			return $this->subscribersMySQLConnection->createOrg(trim(strtolower($org)), trim(strtolower($affiliation)));
 		}
 
