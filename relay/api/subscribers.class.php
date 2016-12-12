@@ -39,8 +39,9 @@
 			return $this->subscribersMySQLConnection->deleteOrg($org);
 		}
 
-		public function addSubscriber($org) {
-			return $this->subscribersMySQLConnection->createOrg($org);
+		public function addSubscriber($org, $affiliation) {
+			error_log('2: ' . $affiliation . PHP_EOL);
+			return $this->subscribersMySQLConnection->createOrg(trim(strtolower($org)), trim(strtolower($affiliation)));
 		}
 
 		public function updateSubscriberStatus($org, $active_status) {

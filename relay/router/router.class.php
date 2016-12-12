@@ -111,6 +111,7 @@
 				// $affiliation will only match 'employee' or 'member'
 				array('POST', '/subscribers/create/[org:orgId]/affiliation/[employee|member:affiliation]/', function ($orgId, $affiliation) {
 					$subscribers = new Subscribers();
+					error_log('1: ' . $affiliation . PHP_EOL);
 					Response::result($subscribers->addSubscriber($orgId, $affiliation));
 				}, 'Add a new org to the table.'),
 			]);

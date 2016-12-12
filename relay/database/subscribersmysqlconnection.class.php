@@ -11,10 +11,9 @@
 
 	namespace Relay\Database;
 
-	use Relay\Utils\Response;
 	use PDO;
 	use PDOException;
-	use Relay\Utils\Utils;
+	use Relay\Utils\Response;
 
 	class SubscribersMySQLConnection {
 		private $config;
@@ -90,15 +89,17 @@
 		 *
 		 * @return bool
 		 */
-		public function createOrg($org) {
+		public function createOrg($org, $affiliation) {
+			// MUST be member or employee
+			if(strcasecmp($affiliation, 'employee') !== 0 && strcasecmp($affiliation, 'member') !== 0) {
+				Response::error(400, "Fikk ikke satt tilgang til $affiliation. Tilgang MÅ være 'employee' eller 'member'.");
+			}
 			$this->conn = $this->getConnection();
 			try {
 				$stmt = $this->conn->prepare("INSERT INTO $this->table (org, affiliation_access) VALUES (:org, :affiliation)");
 				$stmt->bindParam(':org', $org, PDO::PARAM_STR);
-				// TODO - FROM POST
-				$affiliation = 'employee';
 				$stmt->bindParam(':affiliation', $affiliation, PDO::PARAM_STR);
-
+				error_log('3: ' . $affiliation . PHP_EOL);
 				return $stmt->execute() > 0 ? true : false;
 			} catch(PDOException $e) {
 				Response::error(500, 'Samtale med database feilet (MySQL): ' . $e->getMessage());
@@ -127,8 +128,8 @@
 
 		public function updateOrgAffiliationAccess($org, $affiliation) {
 			// MUST be member or employee
-			if(strcasecmp($affiliation, 'employee') !== 0 && strcasecmp($affiliation, 'member') !== 0){
-			   Response::error(400, "Fikk ikke satt tilgang til $affiliation. Tilgang MÅ være 'employee' eller 'member'.");
+			if(strcasecmp($affiliation, 'employee') !== 0 && strcasecmp($affiliation, 'member') !== 0) {
+				Response::error(400, "Fikk ikke satt tilgang til $affiliation. Tilgang MÅ være 'employee' eller 'member'.");
 			}
 
 			$this->conn = $this->getConnection();
