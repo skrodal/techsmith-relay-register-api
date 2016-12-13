@@ -108,8 +108,9 @@
 
 			// Add an org
 			$this->altoRouter->addRoutes([
+				/** STUPID ad-blockers block calls to routes with the word '/affiliation/', hence changed to affiliation_access **/
 				// $affiliation will only match 'employee' or 'member'
-				array('POST', '/subscribers/create/[org:orgId]/affiliation/[employee|member:affiliation]/', function ($orgId, $affiliation) {
+				array('POST', '/subscribers/create/[org:orgId]/affiliation_access/[employee|member:affiliation]/', function ($orgId, $affiliation) {
 					$subscribers = new Subscribers();
 					Response::result($subscribers->addSubscriber($orgId, $affiliation));
 				}, 'Add a new org to the table.'),
@@ -118,7 +119,7 @@
 			// Update affiliation
 			$this->altoRouter->addRoutes([
 				// $affiliation will only match 'employee' or 'member'
-				array('POST', '/subscribers/update/[org:orgId]/affiliation/[employee|member:affiliation]/', function ($orgId, $affiliation) {
+				array('POST', '/subscribers/update/[org:orgId]/affiliation_access/[employee|member:affiliation]/', function ($orgId, $affiliation) {
 					$subscribers = new Subscribers();
 					Response::result($subscribers->updateSubscriberAffiliationAccess($orgId, $affiliation));
 				}, 'Update an orgs affiliation access.'),
