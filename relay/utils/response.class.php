@@ -16,7 +16,7 @@
 			// CORS
 			header("Access-Control-Allow-Origin: *");
 			header("Access-Control-Allow-Credentials: true");
-			header("Access-Control-Allow-Methods: HEAD, GET, POST, OPTIONS");
+			header("Access-Control-Allow-Methods: HEAD, GET, POST, DELETE, OPTIONS");
 			header("Access-Control-Allow-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 			header("Access-Control-Expose-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 			//
@@ -39,7 +39,7 @@
 			// CORS
 			header("Access-Control-Allow-Origin: *");
 			header("Access-Control-Allow-Credentials: true");
-			header("Access-Control-Allow-Methods: HEAD, GET, POST, OPTIONS");
+			header("Access-Control-Allow-Methods: HEAD, GET, POST, DELETE, OPTIONS");
 			header("Access-Control-Allow-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 			header("Access-Control-Expose-Headers: Authorization, X-Requested-With, Origin, Accept, Content-Type");
 			//
